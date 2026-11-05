@@ -1,0 +1,156 @@
+{
+  "rel-amazon": {
+    "repository": "stanford-star/relbench-v1",
+    "tables": 3,
+    "foreign_keys": 2,
+    "tasks": [
+      "item-churn",
+      "item-ltv",
+      "review-rating",
+      "user-churn",
+      "user-item-purchase",
+      "user-item-rate",
+      "user-item-review",
+      "user-ltv"
+    ],
+    "val_timestamp": "2015-10-01",
+    "test_timestamp": "2016-01-01"
+  },
+  "rel-arxiv": {
+    "repository": "stanford-star/relbench-v2-extra",
+    "tables": 6,
+    "foreign_keys": 7,
+    "tasks": [
+      "author-category",
+      "author-publication",
+      "paper-citation",
+      "paper-paper-cocitation"
+    ],
+    "val_timestamp": "2022-01-01",
+    "test_timestamp": "2023-01-01"
+  },
+  "rel-avito": {
+    "repository": "stanford-star/relbench-v1",
+    "tables": 8,
+    "foreign_keys": 11,
+    "tasks": [
+      "ad-ctr",
+      "searchinfo-isuserloggedon",
+      "searchstream-click",
+      "user-ad-visit",
+      "user-clicks",
+      "user-visits"
+    ],
+    "val_timestamp": "2015-05-08",
+    "test_timestamp": "2015-05-14"
+  },
+  "rel-event": {
+    "repository": "stanford-star/relbench-v1",
+    "tables": 5,
+    "foreign_keys": 7,
+    "tasks": [
+      "event_interest-interested",
+      "event_interest-not_interested",
+      "user-attendance",
+      "user-ignore",
+      "user-repeat",
+      "users-birthyear"
+    ],
+    "val_timestamp": "2012-11-21",
+    "test_timestamp": "2012-11-29"
+  },
+  "rel-f1": {
+    "repository": "stanford-star/relbench-v1",
+    "tables": 9,
+    "foreign_keys": 13,
+    "tasks": [
+      "driver-circuit-compete",
+      "driver-dnf",
+      "driver-position",
+      "driver-top3",
+      "qualifying-position",
+      "results-position"
+    ],
+    "val_timestamp": "2005-01-01",
+    "test_timestamp": "2010-01-01"
+  },
+  "rel-hm": {
+    "repository": "stanford-star/relbench-v1",
+    "tables": 3,
+    "foreign_keys": 2,
+    "tasks": [
+      "item-sales",
+      "transactions-price",
+      "user-churn",
+      "user-item-purchase"
+    ],
+    "val_timestamp": "2020-09-07",
+    "test_timestamp": "2020-09-14"
+  },
+  "rel-ratebeer": {
+    "repository": "stanford-star/relbench-v2-extra",
+    "tables": 13,
+    "foreign_keys": 21,
+    "tasks": [
+      "beer-churn",
+      "beer_ratings-total_score",
+      "brewer-dormant",
+      "user-beer-favorite",
+      "user-beer-liked",
+      "user-churn",
+      "user-count",
+      "user-place-liked"
+    ],
+    "val_timestamp": "2018-09-01",
+    "test_timestamp": "2020-01-01"
+  },
+  "rel-salt": {
+    "repository": "stanford-star/relbench-v2-extra",
+    "tables": 4,
+    "foreign_keys": 6,
+    "tasks": [
+      "item-incoterms",
+      "item-plant",
+      "item-shippoint",
+      "sales-group",
+      "sales-incoterms",
+      "sales-office",
+      "sales-payterms",
+      "sales-shipcond"
+    ],
+    "val_timestamp": "2020-02-01",
+    "test_timestamp": "2020-07-01"
+  },
+  "rel-stack": {
+    "repository": "stanford-star/relbench-v1",
+    "tables": 7,
+    "foreign_keys": 11,
+    "tasks": [
+      "post-post-related",
+      "post-votes",
+      "user-badge",
+      "user-engagement",
+      "user-post-comment"
+    ],
+    "val_timestamp": "2020-10-01",
+    "test_timestamp": "2021-01-01"
+  },
+  "rel-trial": {
+    "repository": "stanford-star/relbench-v1",
+    "tables": 15,
+    "foreign_keys": 15,
+    "tasks": [
+      "condition-sponsor-run",
+      "eligibilities-adult",
+      "eligibilities-child",
+      "site-sponsor-run",
+      "site-success",
+      "studies-enrollment",
+      "studies-has_dmc",
+      "study-adverse",
+      "study-outcome"
+    ],
+    "val_timestamp": "2020-01-01",
+    "test_timestamp": "2021-01-01"
+  }
+}
