@@ -96,7 +96,7 @@ def discretize(arr):
         arr = pc.cast(arr, pa.int64()) if pa.types.is_timestamp(t) else pc.cast(pc.cast(arr, pa.date32()), pa.int32())
         t = arr.type
     if pa.types.is_integer(t) or pa.types.is_floating(t) or pa.types.is_boolean(t) or pa.types.is_decimal(t):
-        vals = np.asarray(pc.cast(arr, pa.float64()).to_numpy(zero_copy_only=False), dtype=float)[valid_idx]
+        vals = np.asarray(pc.cast(arr, pa.float64(), safe=False).to_numpy(zero_copy_only=False), dtype=float)[valid_idx]
         finite = np.isfinite(vals)
         uniq = np.unique(vals[finite])
         if len(uniq) <= N_BINS:
@@ -280,10 +280,30 @@ def process_dataset(name, repo, api, args):
             if tcol:
                 del full, full_t, full_fk
 
+    # own-feature entropy of every table (used for information that reaches a join through one-to-one lookups)
+    table_rows = []
+    for t, spec in tables.items():
+        if t not in n_rows:
+            continue
+        pf = pq.ParquetFile(files[t])
+        fkeys = spec.get("fkeys") or {}
+        feats = [c for c in pf.schema_arrow.names
+                 if c != spec.get("pkey") and c not in fkeys and c != spec.get("time_col")]
+        h = 0.0
+        if feats and n_rows[t]:
+            smp = sample_rows(pf, n_rows[t], feats, args.sample_rows)
+            for c in feats:
+                try:
+                    h += miller_madow_entropy(discretize(smp.column(c))[0])
+                except Exception as e:
+                    log(f"    skipped table feature {t}.{c}: {e!r}")
+        table_rows.append({"dataset": name, "table": t, "rows": n_rows[t], "D": len(feats),
+                           "H_row_marginal": h, "foreign_keys": json.dumps(fkeys)})
+
     tasks = task_manifests(api, name)
     if not args.keep_data:
         shutil.rmtree(ddir / "db", ignore_errors=True)
-    return man, fk_rows, tasks
+    return man, fk_rows, tasks, table_rows
 
 
 # ---------------------------------------------------------------- per task features
@@ -370,7 +390,7 @@ def main():
             log(f"{name}: not found in the RelBench repositories")
             continue
         try:
-            man, fk_rows, tasks = process_dataset(name, found[name], api, args)
+            man, fk_rows, tasks, table_rows = process_dataset(name, found[name], api, args)
         except Exception as e:
             import traceback
             log(f"{name}: FAILED {e!r}\n{traceback.format_exc()}")
@@ -378,6 +398,9 @@ def main():
         t_rows = task_features(name, man, pd.DataFrame(fk_rows), tasks) if fk_rows else []
         with open(fk_jsonl, "a") as f:
             for r in fk_rows:
+                f.write(json.dumps(r, default=float) + "\n")
+        with open(OUT / "table_feature_statistics.jsonl", "a") as f:
+            for r in table_rows:
                 f.write(json.dumps(r, default=float) + "\n")
         with open(task_jsonl, "a") as f:
             for r in t_rows:
@@ -387,7 +410,8 @@ def main():
                          "test_timestamp": str(man["test_timestamp"])}
         json.dump(summary, open(summary_path, "w"), indent=2)
         log(f"{name}: {len(fk_rows)} foreign keys, {len(t_rows)} tasks written")
-    for src, dst in ((fk_jsonl, "foreign_key_join_statistics.csv"), (task_jsonl, "task_join_features.csv")):
+    for src, dst in ((fk_jsonl, "foreign_key_join_statistics.csv"), (task_jsonl, "task_join_features.csv"),
+                     (OUT / "table_feature_statistics.jsonl", "table_feature_statistics.csv")):
         if src.exists():
             pd.DataFrame([json.loads(l) for l in open(src)]).to_csv(OUT / dst, index=False)
     log("RELBENCH_EXTRACTION_COMPLETE")

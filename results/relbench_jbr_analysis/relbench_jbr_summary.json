@@ -1,0 +1,90 @@
+{
+  "foreign_keys": 95,
+  "databases": 10,
+  "fk_supercritical_d128": 44,
+  "fk_supercritical_eff_d128": 64,
+  "fk_supercritical_d256": 34,
+  "tasks_with_published_results": 30,
+  "tasks_missing_predictors": [],
+  "primary": {
+    "predictor": "jbr_eff_entropy_weighted",
+    "outcome": "rdl_difficulty",
+    "within_database_concordance": 0.2,
+    "non_tied_pairs": 5,
+    "permutation_p_one_sided": 0.9129087091290871,
+    "spearman_rho": 0.0153398784353086,
+    "permutation_p": 0.9032096790320968,
+    "p_holm": 1.0,
+    "lodo_cv_r2": -0.22841456298196272
+  },
+  "best_lodo_r2_by_outcome": {
+    "rdl_difficulty": [
+      {
+        "predictor": "schema_avg_clustering",
+        "lodo_cv_r2": -0.122,
+        "spearman_rho": -0.32
+      },
+      {
+        "predictor": "max_join_depth",
+        "lodo_cv_r2": -0.123,
+        "spearman_rho": -0.155
+      },
+      {
+        "predictor": "schema_tables",
+        "lodo_cv_r2": -0.133,
+        "spearman_rho": -0.099
+      }
+    ],
+    "relational_gain": [
+      {
+        "predictor": "schema_tables",
+        "lodo_cv_r2": 0.104,
+        "spearman_rho": -0.501
+      },
+      {
+        "predictor": "tables_within_two_hops",
+        "lodo_cv_r2": -0.178,
+        "spearman_rho": -0.171
+      },
+      {
+        "predictor": "jbr_eff_sum_two_hop",
+        "lodo_cv_r2": -0.25,
+        "spearman_rho": -0.195
+      }
+    ],
+    "relgnn_gain": [
+      {
+        "predictor": "jbr_eff_sum_two_hop",
+        "lodo_cv_r2": -0.09,
+        "spearman_rho": 0.177
+      },
+      {
+        "predictor": "schema_avg_degree",
+        "lodo_cv_r2": -0.092,
+        "spearman_rho": 0.268
+      },
+      {
+        "predictor": "jbr_eff_max_one_hop",
+        "lodo_cv_r2": -0.128,
+        "spearman_rho": 0.131
+      }
+    ],
+    "relgt_gain": [
+      {
+        "predictor": "max_join_depth",
+        "lodo_cv_r2": -0.011,
+        "spearman_rho": 0.472
+      },
+      {
+        "predictor": "schema_avg_clustering",
+        "lodo_cv_r2": -0.219,
+        "spearman_rho": -0.38
+      },
+      {
+        "predictor": "schema_tables",
+        "lodo_cv_r2": -0.242,
+        "spearman_rho": 0.456
+      }
+    ]
+  }
+}

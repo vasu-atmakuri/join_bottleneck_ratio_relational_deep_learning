@@ -1,0 +1,74 @@
+dataset,table,rows,D,H_row_marginal,foreign_keys
+rel-amazon,review,20862040,4,12.281545434112777,"{""customer_id"": ""customer"", ""product_id"": ""product""}"
+rel-amazon,product,506012,5,24.02357712404251,{}
+rel-amazon,customer,1850193,1,4.93554459876013,{}
+rel-arxiv,paperCategories,155061,0,0.0,"{""Paper_ID"": ""papers"", ""Category_ID"": ""categories""}"
+rel-arxiv,authors,143691,2,9.999902637898211,{}
+rel-arxiv,categories,53,1,5.35738787218167,{}
+rel-arxiv,citations,1595687,0,0.0,"{""Paper_ID"": ""papers"", ""References_Paper_ID"": ""papers""}"
+rel-arxiv,papers,222769,4,19.999877248433158,"{""Primary_Category_ID"": ""categories""}"
+rel-arxiv,paperAuthors,616585,0,0.0,"{""Paper_ID"": ""papers"", ""Author_ID"": ""authors""}"
+rel-avito,VisitStream,6454562,1,5.000106685910345,"{""UserID"": ""UserInfo"", ""AdID"": ""AdsInfo""}"
+rel-avito,AdsInfo,5960558,3,9.790523513173707,"{""LocationID"": ""Location"", ""CategoryID"": ""Category""}"
+rel-avito,SearchStream,9254702,4,8.05846148233522,"{""SearchID"": ""SearchInfo"", ""AdID"": ""AdsInfo""}"
+rel-avito,SearchInfo,2579289,3,7.31276581605365,"{""UserID"": ""UserInfo"", ""LocationID"": ""Location"", ""CategoryID"": ""Category""}"
+rel-avito,Category,68,3,9.002533146552235,{}
+rel-avito,PhoneRequestsStream,302974,1,4.999909395005866,"{""UserID"": ""UserInfo"", ""AdID"": ""AdsInfo""}"
+rel-avito,UserInfo,98250,4,9.9605849845727,{}
+rel-avito,Location,3512,3,9.967554092221121,{}
+rel-event,user_friends,30386403,0,0.0,"{""user"": ""users"", ""friend"": ""users""}"
+rel-event,event_interest,15398,3,1.3037204998942231,"{""event"": ""events"", ""user"": ""users""}"
+rel-event,event_attendees,11245010,1,0.8875943583439195,"{""event"": ""events"", ""user_id"": ""users""}"
+rel-event,users,38209,5,14.036182357535774,{}
+rel-event,events,3137972,107,99.16146488255984,"{""user_id"": ""users""}"
+rel-f1,races,1101,4,15.275467181079298,"{""circuitId"": ""circuits""}"
+rel-f1,qualifying,9815,2,9.325414486199655,"{""raceId"": ""races"", ""driverId"": ""drivers"", ""constructorId"": ""constructors""}"
+rel-f1,constructor_standings,13051,3,9.32356824721969,"{""raceId"": ""races"", ""constructorId"": ""constructors""}"
+rel-f1,standings,34124,3,8.738360284501395,"{""raceId"": ""races"", ""driverId"": ""drivers""}"
+rel-f1,constructors,211,3,12.96668118175216,{}
+rel-f1,drivers,857,6,24.427022573037252,{}
+rel-f1,constructor_results,12290,1,2.4260615919426756,"{""raceId"": ""races"", ""constructorId"": ""constructors""}"
+rel-f1,circuits,77,7,34.40693303645729,{}
+rel-f1,results,26080,10,34.173840358117516,"{""raceId"": ""races"", ""driverId"": ""drivers"", ""constructorId"": ""constructors""}"
+rel-hm,transactions,15453651,2,4.950462699417166,"{""customer_id"": ""customer"", ""article_id"": ""article""}"
+rel-hm,article,105542,24,87.96882285329151,{}
+rel-hm,customer,1371980,6,13.029979689225058,{}
+rel-ratebeer,brewers,50013,26,77.975424000348,"{""country_id"": ""countries"", ""state_id"": ""states"", ""type_id"": ""place_types""}"
+rel-ratebeer,beer_styles,157,5,15.716550743529904,{}
+rel-ratebeer,beers,1191662,16,36.57290395954464,"{""brewer_id"": ""brewers"", ""style_id"": ""beer_styles""}"
+rel-ratebeer,countries,251,4,13.202474076559747,{}
+rel-ratebeer,place_types,8,1,3.6311790803889217,{}
+rel-ratebeer,users,236969,1,0.8742401971185481,{}
+rel-ratebeer,places,86061,55,89.497327297797,"{""state_id"": ""states"", ""type_id"": ""place_types"", ""country_id"": ""countries""}"
+rel-ratebeer,beer_ratings,14344128,9,24.403394366527383,"{""user_id"": ""users"", ""beer_id"": ""beers"", ""availability_id"": ""availability""}"
+rel-ratebeer,place_ratings,385707,8,25.683934262269858,"{""place_id"": ""places"", ""user_id"": ""users""}"
+rel-ratebeer,favorites,212273,1,0.001633853741134827,"{""user_id"": ""users"", ""beer_id"": ""beers""}"
+rel-ratebeer,availability,117424,6,15.196031166782221,"{""beer_id"": ""beers"", ""place_id"": ""places"", ""country_id"": ""countries"", ""user_id"": ""users""}"
+rel-ratebeer,beer_upcs,249348,2,10.033424767423515,"{""beer_id"": ""beers""}"
+rel-ratebeer,states,622,2,6.779815366037381,"{""country_id"": ""countries""}"
+rel-salt,salesdocumentitem,2319540,6,17.418731661580853,"{""SALESDOCUMENT"": ""salesdocument"", ""SOLDTOPARTY"": ""customer"", ""SHIPTOPARTY"": ""customer"", ""BILLTOPARTY"": ""customer"", ""PAYERPARTY"": ""customer""}"
+rel-salt,salesdocument,500908,11,21.654846044598152,{}
+rel-salt,address,1788887,2,5.301775129362694,{}
+rel-salt,customer,139607,0,0.0,"{""ADDRESSID"": ""address""}"
+rel-stack,badges,590833,3,4.284806465080162,"{""UserId"": ""users""}"
+rel-stack,votes,1673836,1,1.0441796169520292,"{""PostId"": ""posts"", ""UserId"": ""users""}"
+rel-stack,users,333784,5,14.657893727072173,{}
+rel-stack,comments,794597,3,6.287790339357625,"{""UserId"": ""users"", ""PostId"": ""posts""}"
+rel-stack,posts,415913,6,14.512294561781196,"{""OwnerUserId"": ""users"", ""ParentId"": ""posts""}"
+rel-stack,postLinks,103969,1,0.5926804493288704,"{""PostId"": ""posts"", ""RelatedPostId"": ""posts""}"
+rel-stack,postHistory,1486886,6,17.40465576214195,"{""PostId"": ""posts"", ""UserId"": ""users""}"
+rel-trial,conditions_studies,440543,0,0.0,"{""nct_id"": ""studies"", ""condition_id"": ""conditions""}"
+rel-trial,interventions,3462,1,4.997437180833536,{}
+rel-trial,drop_withdrawals,440547,3,9.505396795456836,"{""nct_id"": ""studies""}"
+rel-trial,outcome_analyses,254420,19,43.55252535370603,"{""nct_id"": ""studies"", ""outcome_id"": ""outcomes""}"
+rel-trial,sponsors_studies,425014,1,0.9408032628006743,"{""nct_id"": ""studies"", ""sponsor_id"": ""sponsors""}"
+rel-trial,facilities_studies,1867226,0,0.0,"{""nct_id"": ""studies"", ""facility_id"": ""facilities""}"
+rel-trial,eligibilities,273160,12,16.94400259709454,"{""nct_id"": ""studies""}"
+rel-trial,interventions_studies,179738,0,0.0,"{""nct_id"": ""studies"", ""intervention_id"": ""interventions""}"
+rel-trial,outcomes,476790,9,30.17821260051554,"{""nct_id"": ""studies""}"
+rel-trial,facilities,453233,5,21.500214383706254,{}
+rel-trial,reported_event_totals,435129,4,11.040545938304344,"{""nct_id"": ""studies""}"
+rel-trial,sponsors,53241,2,6.794157088292943,{}
+rel-trial,studies,273160,26,46.497043564598485,{}
+rel-trial,conditions,3973,1,5.000277043737193,{}
+rel-trial,designs,272521,12,14.187648675850605,"{""nct_id"": ""studies""}"

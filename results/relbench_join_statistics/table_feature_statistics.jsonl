@@ -1,0 +1,73 @@
+{"dataset": "rel-amazon", "table": "review", "rows": 20862040, "D": 4, "H_row_marginal": 12.281545434112777, "foreign_keys": "{\"customer_id\": \"customer\", \"product_id\": \"product\"}"}
+{"dataset": "rel-amazon", "table": "product", "rows": 506012, "D": 5, "H_row_marginal": 24.02357712404251, "foreign_keys": "{}"}
+{"dataset": "rel-amazon", "table": "customer", "rows": 1850193, "D": 1, "H_row_marginal": 4.93554459876013, "foreign_keys": "{}"}
+{"dataset": "rel-arxiv", "table": "paperCategories", "rows": 155061, "D": 0, "H_row_marginal": 0.0, "foreign_keys": "{\"Paper_ID\": \"papers\", \"Category_ID\": \"categories\"}"}
+{"dataset": "rel-arxiv", "table": "authors", "rows": 143691, "D": 2, "H_row_marginal": 9.999902637898211, "foreign_keys": "{}"}
+{"dataset": "rel-arxiv", "table": "categories", "rows": 53, "D": 1, "H_row_marginal": 5.35738787218167, "foreign_keys": "{}"}
+{"dataset": "rel-arxiv", "table": "citations", "rows": 1595687, "D": 0, "H_row_marginal": 0.0, "foreign_keys": "{\"Paper_ID\": \"papers\", \"References_Paper_ID\": \"papers\"}"}
+{"dataset": "rel-arxiv", "table": "papers", "rows": 222769, "D": 4, "H_row_marginal": 19.999877248433158, "foreign_keys": "{\"Primary_Category_ID\": \"categories\"}"}
+{"dataset": "rel-arxiv", "table": "paperAuthors", "rows": 616585, "D": 0, "H_row_marginal": 0.0, "foreign_keys": "{\"Paper_ID\": \"papers\", \"Author_ID\": \"authors\"}"}
+{"dataset": "rel-avito", "table": "VisitStream", "rows": 6454562, "D": 1, "H_row_marginal": 5.000106685910345, "foreign_keys": "{\"UserID\": \"UserInfo\", \"AdID\": \"AdsInfo\"}"}
+{"dataset": "rel-avito", "table": "AdsInfo", "rows": 5960558, "D": 3, "H_row_marginal": 9.790523513173707, "foreign_keys": "{\"LocationID\": \"Location\", \"CategoryID\": \"Category\"}"}
+{"dataset": "rel-avito", "table": "SearchStream", "rows": 9254702, "D": 4, "H_row_marginal": 8.05846148233522, "foreign_keys": "{\"SearchID\": \"SearchInfo\", \"AdID\": \"AdsInfo\"}"}
+{"dataset": "rel-avito", "table": "SearchInfo", "rows": 2579289, "D": 3, "H_row_marginal": 7.31276581605365, "foreign_keys": "{\"UserID\": \"UserInfo\", \"LocationID\": \"Location\", \"CategoryID\": \"Category\"}"}
+{"dataset": "rel-avito", "table": "Category", "rows": 68, "D": 3, "H_row_marginal": 9.002533146552235, "foreign_keys": "{}"}
+{"dataset": "rel-avito", "table": "PhoneRequestsStream", "rows": 302974, "D": 1, "H_row_marginal": 4.999909395005866, "foreign_keys": "{\"UserID\": \"UserInfo\", \"AdID\": \"AdsInfo\"}"}
+{"dataset": "rel-avito", "table": "UserInfo", "rows": 98250, "D": 4, "H_row_marginal": 9.9605849845727, "foreign_keys": "{}"}
+{"dataset": "rel-avito", "table": "Location", "rows": 3512, "D": 3, "H_row_marginal": 9.967554092221121, "foreign_keys": "{}"}
+{"dataset": "rel-event", "table": "user_friends", "rows": 30386403, "D": 0, "H_row_marginal": 0.0, "foreign_keys": "{\"user\": \"users\", \"friend\": \"users\"}"}
+{"dataset": "rel-event", "table": "event_interest", "rows": 15398, "D": 3, "H_row_marginal": 1.3037204998942231, "foreign_keys": "{\"event\": \"events\", \"user\": \"users\"}"}
+{"dataset": "rel-event", "table": "event_attendees", "rows": 11245010, "D": 1, "H_row_marginal": 0.8875943583439195, "foreign_keys": "{\"event\": \"events\", \"user_id\": \"users\"}"}
+{"dataset": "rel-event", "table": "users", "rows": 38209, "D": 5, "H_row_marginal": 14.036182357535774, "foreign_keys": "{}"}
+{"dataset": "rel-event", "table": "events", "rows": 3137972, "D": 107, "H_row_marginal": 99.16146488255984, "foreign_keys": "{\"user_id\": \"users\"}"}
+{"dataset": "rel-f1", "table": "races", "rows": 1101, "D": 4, "H_row_marginal": 15.275467181079298, "foreign_keys": "{\"circuitId\": \"circuits\"}"}
+{"dataset": "rel-f1", "table": "qualifying", "rows": 9815, "D": 2, "H_row_marginal": 9.325414486199655, "foreign_keys": "{\"raceId\": \"races\", \"driverId\": \"drivers\", \"constructorId\": \"constructors\"}"}
+{"dataset": "rel-f1", "table": "constructor_standings", "rows": 13051, "D": 3, "H_row_marginal": 9.32356824721969, "foreign_keys": "{\"raceId\": \"races\", \"constructorId\": \"constructors\"}"}
+{"dataset": "rel-f1", "table": "standings", "rows": 34124, "D": 3, "H_row_marginal": 8.738360284501395, "foreign_keys": "{\"raceId\": \"races\", \"driverId\": \"drivers\"}"}
+{"dataset": "rel-f1", "table": "constructors", "rows": 211, "D": 3, "H_row_marginal": 12.96668118175216, "foreign_keys": "{}"}
+{"dataset": "rel-f1", "table": "drivers", "rows": 857, "D": 6, "H_row_marginal": 24.427022573037252, "foreign_keys": "{}"}
+{"dataset": "rel-f1", "table": "constructor_results", "rows": 12290, "D": 1, "H_row_marginal": 2.4260615919426756, "foreign_keys": "{\"raceId\": \"races\", \"constructorId\": \"constructors\"}"}
+{"dataset": "rel-f1", "table": "circuits", "rows": 77, "D": 7, "H_row_marginal": 34.40693303645729, "foreign_keys": "{}"}
+{"dataset": "rel-f1", "table": "results", "rows": 26080, "D": 10, "H_row_marginal": 34.173840358117516, "foreign_keys": "{\"raceId\": \"races\", \"driverId\": \"drivers\", \"constructorId\": \"constructors\"}"}
+{"dataset": "rel-hm", "table": "transactions", "rows": 15453651, "D": 2, "H_row_marginal": 4.950462699417166, "foreign_keys": "{\"customer_id\": \"customer\", \"article_id\": \"article\"}"}
+{"dataset": "rel-hm", "table": "article", "rows": 105542, "D": 24, "H_row_marginal": 87.96882285329151, "foreign_keys": "{}"}
+{"dataset": "rel-hm", "table": "customer", "rows": 1371980, "D": 6, "H_row_marginal": 13.029979689225058, "foreign_keys": "{}"}
+{"dataset": "rel-ratebeer", "table": "brewers", "rows": 50013, "D": 26, "H_row_marginal": 77.975424000348, "foreign_keys": "{\"country_id\": \"countries\", \"state_id\": \"states\", \"type_id\": \"place_types\"}"}
+{"dataset": "rel-ratebeer", "table": "beer_styles", "rows": 157, "D": 5, "H_row_marginal": 15.716550743529904, "foreign_keys": "{}"}
+{"dataset": "rel-ratebeer", "table": "beers", "rows": 1191662, "D": 16, "H_row_marginal": 36.57290395954464, "foreign_keys": "{\"brewer_id\": \"brewers\", \"style_id\": \"beer_styles\"}"}
+{"dataset": "rel-ratebeer", "table": "countries", "rows": 251, "D": 4, "H_row_marginal": 13.202474076559747, "foreign_keys": "{}"}
+{"dataset": "rel-ratebeer", "table": "place_types", "rows": 8, "D": 1, "H_row_marginal": 3.6311790803889217, "foreign_keys": "{}"}
+{"dataset": "rel-ratebeer", "table": "users", "rows": 236969, "D": 1, "H_row_marginal": 0.8742401971185481, "foreign_keys": "{}"}
+{"dataset": "rel-ratebeer", "table": "places", "rows": 86061, "D": 55, "H_row_marginal": 89.497327297797, "foreign_keys": "{\"state_id\": \"states\", \"type_id\": \"place_types\", \"country_id\": \"countries\"}"}
+{"dataset": "rel-ratebeer", "table": "beer_ratings", "rows": 14344128, "D": 9, "H_row_marginal": 24.403394366527383, "foreign_keys": "{\"user_id\": \"users\", \"beer_id\": \"beers\", \"availability_id\": \"availability\"}"}
+{"dataset": "rel-ratebeer", "table": "place_ratings", "rows": 385707, "D": 8, "H_row_marginal": 25.683934262269858, "foreign_keys": "{\"place_id\": \"places\", \"user_id\": \"users\"}"}
+{"dataset": "rel-ratebeer", "table": "favorites", "rows": 212273, "D": 1, "H_row_marginal": 0.001633853741134827, "foreign_keys": "{\"user_id\": \"users\", \"beer_id\": \"beers\"}"}
+{"dataset": "rel-ratebeer", "table": "availability", "rows": 117424, "D": 6, "H_row_marginal": 15.196031166782221, "foreign_keys": "{\"beer_id\": \"beers\", \"place_id\": \"places\", \"country_id\": \"countries\", \"user_id\": \"users\"}"}
+{"dataset": "rel-ratebeer", "table": "beer_upcs", "rows": 249348, "D": 2, "H_row_marginal": 10.033424767423515, "foreign_keys": "{\"beer_id\": \"beers\"}"}
+{"dataset": "rel-ratebeer", "table": "states", "rows": 622, "D": 2, "H_row_marginal": 6.779815366037381, "foreign_keys": "{\"country_id\": \"countries\"}"}
+{"dataset": "rel-salt", "table": "salesdocumentitem", "rows": 2319540, "D": 6, "H_row_marginal": 17.418731661580853, "foreign_keys": "{\"SALESDOCUMENT\": \"salesdocument\", \"SOLDTOPARTY\": \"customer\", \"SHIPTOPARTY\": \"customer\", \"BILLTOPARTY\": \"customer\", \"PAYERPARTY\": \"customer\"}"}
+{"dataset": "rel-salt", "table": "salesdocument", "rows": 500908, "D": 11, "H_row_marginal": 21.654846044598152, "foreign_keys": "{}"}
+{"dataset": "rel-salt", "table": "address", "rows": 1788887, "D": 2, "H_row_marginal": 5.301775129362694, "foreign_keys": "{}"}
+{"dataset": "rel-salt", "table": "customer", "rows": 139607, "D": 0, "H_row_marginal": 0.0, "foreign_keys": "{\"ADDRESSID\": \"address\"}"}
+{"dataset": "rel-stack", "table": "badges", "rows": 590833, "D": 3, "H_row_marginal": 4.284806465080162, "foreign_keys": "{\"UserId\": \"users\"}"}
+{"dataset": "rel-stack", "table": "votes", "rows": 1673836, "D": 1, "H_row_marginal": 1.0441796169520292, "foreign_keys": "{\"PostId\": \"posts\", \"UserId\": \"users\"}"}
+{"dataset": "rel-stack", "table": "users", "rows": 333784, "D": 5, "H_row_marginal": 14.657893727072173, "foreign_keys": "{}"}
+{"dataset": "rel-stack", "table": "comments", "rows": 794597, "D": 3, "H_row_marginal": 6.287790339357625, "foreign_keys": "{\"UserId\": \"users\", \"PostId\": \"posts\"}"}
+{"dataset": "rel-stack", "table": "posts", "rows": 415913, "D": 6, "H_row_marginal": 14.512294561781196, "foreign_keys": "{\"OwnerUserId\": \"users\", \"ParentId\": \"posts\"}"}
+{"dataset": "rel-stack", "table": "postLinks", "rows": 103969, "D": 1, "H_row_marginal": 0.5926804493288704, "foreign_keys": "{\"PostId\": \"posts\", \"RelatedPostId\": \"posts\"}"}
+{"dataset": "rel-stack", "table": "postHistory", "rows": 1486886, "D": 6, "H_row_marginal": 17.40465576214195, "foreign_keys": "{\"PostId\": \"posts\", \"UserId\": \"users\"}"}
+{"dataset": "rel-trial", "table": "conditions_studies", "rows": 440543, "D": 0, "H_row_marginal": 0.0, "foreign_keys": "{\"nct_id\": \"studies\", \"condition_id\": \"conditions\"}"}
+{"dataset": "rel-trial", "table": "interventions", "rows": 3462, "D": 1, "H_row_marginal": 4.997437180833536, "foreign_keys": "{}"}
+{"dataset": "rel-trial", "table": "drop_withdrawals", "rows": 440547, "D": 3, "H_row_marginal": 9.505396795456836, "foreign_keys": "{\"nct_id\": \"studies\"}"}
+{"dataset": "rel-trial", "table": "outcome_analyses", "rows": 254420, "D": 19, "H_row_marginal": 43.55252535370603, "foreign_keys": "{\"nct_id\": \"studies\", \"outcome_id\": \"outcomes\"}"}
+{"dataset": "rel-trial", "table": "sponsors_studies", "rows": 425014, "D": 1, "H_row_marginal": 0.9408032628006743, "foreign_keys": "{\"nct_id\": \"studies\", \"sponsor_id\": \"sponsors\"}"}
+{"dataset": "rel-trial", "table": "facilities_studies", "rows": 1867226, "D": 0, "H_row_marginal": 0.0, "foreign_keys": "{\"nct_id\": \"studies\", \"facility_id\": \"facilities\"}"}
+{"dataset": "rel-trial", "table": "eligibilities", "rows": 273160, "D": 12, "H_row_marginal": 16.94400259709454, "foreign_keys": "{\"nct_id\": \"studies\"}"}
+{"dataset": "rel-trial", "table": "interventions_studies", "rows": 179738, "D": 0, "H_row_marginal": 0.0, "foreign_keys": "{\"nct_id\": \"studies\", \"intervention_id\": \"interventions\"}"}
+{"dataset": "rel-trial", "table": "outcomes", "rows": 476790, "D": 9, "H_row_marginal": 30.17821260051554, "foreign_keys": "{\"nct_id\": \"studies\"}"}
+{"dataset": "rel-trial", "table": "facilities", "rows": 453233, "D": 5, "H_row_marginal": 21.500214383706254, "foreign_keys": "{}"}
+{"dataset": "rel-trial", "table": "reported_event_totals", "rows": 435129, "D": 4, "H_row_marginal": 11.040545938304344, "foreign_keys": "{\"nct_id\": \"studies\"}"}
+{"dataset": "rel-trial", "table": "sponsors", "rows": 53241, "D": 2, "H_row_marginal": 6.794157088292943, "foreign_keys": "{}"}
+{"dataset": "rel-trial", "table": "studies", "rows": 273160, "D": 26, "H_row_marginal": 46.497043564598485, "foreign_keys": "{}"}
+{"dataset": "rel-trial", "table": "conditions", "rows": 3973, "D": 1, "H_row_marginal": 5.000277043737193, "foreign_keys": "{}"}
+{"dataset": "rel-trial", "table": "designs", "rows": 272521, "D": 12, "H_row_marginal": 14.187648675850605, "foreign_keys": "{\"nct_id\": \"studies\"}"}
