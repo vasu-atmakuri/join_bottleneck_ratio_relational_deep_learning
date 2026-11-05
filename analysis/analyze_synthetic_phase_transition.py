@@ -227,8 +227,8 @@ def main():
                 for _ in range(300):
                     def resample(model):
                         g = ext[ext.model == model]
-                        pick = g.groupby("scenario", group_keys=False).apply(
-                            lambda s: s.sample(len(s), replace=True, random_state=int(RNG.integers(1e9))))
+                        pick = g.groupby("scenario").sample(frac=1.0, replace=True,
+                                                            random_state=int(RNG.integers(1e9)))
                         m_ = pick.groupby("scenario").agg(x=("log2_jbr", "mean"), y=("test_auroc", "mean"))
                         fb = fit_sigmoid(m_.x, m_.y)
                         return fb["midpoint_log2_jbr"] if fb else np.nan
