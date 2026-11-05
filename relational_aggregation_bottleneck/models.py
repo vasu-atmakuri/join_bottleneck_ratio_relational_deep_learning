@@ -30,13 +30,23 @@ def mlp(sizes, final_activation=False):
     return nn.Sequential(*layers)
 
 
-def pool(h, kind):
+def pool(h, kind, mask=None):
+    """Permutation-invariant pooling over children; `mask` [B, K] marks real (non-padded) children."""
+    if mask is None:
+        if kind == "sum":
+            return h.sum(dim=1)
+        if kind == "mean":
+            return h.mean(dim=1)
+        if kind == "max":
+            return h.max(dim=1).values
+        raise ValueError(kind)
+    m = mask.unsqueeze(-1).to(h.dtype)
     if kind == "sum":
-        return h.sum(dim=1)
+        return (h * m).sum(dim=1)
     if kind == "mean":
-        return h.mean(dim=1)
+        return (h * m).sum(dim=1) / m.sum(dim=1).clamp(min=1)
     if kind == "max":
-        return h.max(dim=1).values
+        return h.masked_fill(~mask.unsqueeze(-1), float("-inf")).max(dim=1).values
     raise ValueError(kind)
 
 
@@ -48,8 +58,8 @@ class DeepSetsAggregator(nn.Module):
         self.parent_encoder = mlp([D, HIDDEN, HIDDEN], final_activation=True)
         self.rho = mlp([d + HIDDEN, HIDDEN, HIDDEN, 1])
 
-    def forward(self, parent, children):
-        agg = pool(self.phi(children), self.aggregator)
+    def forward(self, parent, children, mask=None):
+        agg = pool(self.phi(children), self.aggregator, mask)
         return self.rho(torch.cat([agg, self.parent_encoder(parent)], dim=-1)).squeeze(-1)
 
 
@@ -74,22 +84,25 @@ class GNNAggregator(nn.Module):
             self.w_msg = nn.Linear(d, d)
         self.head = mlp([d, HIDDEN, 1])
 
-    def aggregate(self, hp, hc):
+    def aggregate(self, hp, hc, mask=None):
         if self.architecture == "SumAgg":
-            return self.w_msg(hc).sum(dim=1)
+            return pool(self.w_msg(hc), "sum", mask)
         if self.architecture == "MeanAgg":
-            return self.w_msg(hc).mean(dim=1)
+            return pool(self.w_msg(hc), "mean", mask)
         B, K, _ = hc.shape
         q = self.q(hp).view(B, self.heads, 1, self.head_dim)
         k = self.k(hc).view(B, K, self.heads, self.head_dim).transpose(1, 2)
         v = self.v(hc).view(B, K, self.heads, self.head_dim).transpose(1, 2)
-        att = torch.softmax(q @ k.transpose(-1, -2) / self.head_dim ** 0.5, dim=-1)
+        scores = q @ k.transpose(-1, -2) / self.head_dim ** 0.5
+        if mask is not None:
+            scores = scores.masked_fill(~mask[:, None, None, :], float("-inf"))
+        att = torch.softmax(scores, dim=-1)
         return self.out((att @ v).reshape(B, self.heads * self.head_dim))
 
-    def forward(self, parent, children):
+    def forward(self, parent, children, mask=None):
         hp = self.parent_encoder(parent)
         hc = self.child_encoder(children)
-        h = torch.relu(self.w_self(hp) + self.aggregate(hp, hc))
+        h = torch.relu(self.w_self(hp) + self.aggregate(hp, hc, mask))
         return self.head(h).squeeze(-1)
 
 
