@@ -1,0 +1,158 @@
+{
+  "tasks": 21,
+  "joins_scored": 76,
+  "best_by_outcome": {
+    "rdl_difficulty": [
+      {
+        "predictor": "max_join_depth",
+        "spearman_rho": 0.007,
+        "permutation_p": 1.0,
+        "p_holm": 1.0,
+        "lodo_cv_r2": -0.131,
+        "concordant_pairs": 1,
+        "discordant_pairs": 0
+      },
+      {
+        "predictor": "relevant_bits_at_risk",
+        "spearman_rho": 0.06,
+        "permutation_p": 0.797,
+        "p_holm": 1.0,
+        "lodo_cv_r2": -0.179,
+        "concordant_pairs": 1,
+        "discordant_pairs": 6
+      },
+      {
+        "predictor": "tc_jbr_max",
+        "spearman_rho": 0.045,
+        "permutation_p": 0.841,
+        "p_holm": 1.0,
+        "lodo_cv_r2": -0.2,
+        "concordant_pairs": 1,
+        "discordant_pairs": 6
+      },
+      {
+        "predictor": "tc_jbr_relevance_weighted",
+        "spearman_rho": -0.09,
+        "permutation_p": 0.4,
+        "p_holm": 1.0,
+        "lodo_cv_r2": -0.2,
+        "concordant_pairs": 1,
+        "discordant_pairs": 6
+      }
+    ],
+    "relational_gain": [
+      {
+        "predictor": "relevant_bits_at_risk",
+        "spearman_rho": -0.279,
+        "permutation_p": 0.547,
+        "p_holm": 1.0,
+        "lodo_cv_r2": -0.227,
+        "concordant_pairs": 2,
+        "discordant_pairs": 5
+      },
+      {
+        "predictor": "tc_jbr_max",
+        "spearman_rho": -0.317,
+        "permutation_p": 0.374,
+        "p_holm": 1.0,
+        "lodo_cv_r2": -0.252,
+        "concordant_pairs": 2,
+        "discordant_pairs": 5
+      },
+      {
+        "predictor": "jbr_eff_max_one_hop",
+        "spearman_rho": -0.26,
+        "permutation_p": 0.763,
+        "p_holm": 1.0,
+        "lodo_cv_r2": -0.379,
+        "concordant_pairs": 1,
+        "discordant_pairs": 2
+      },
+      {
+        "predictor": "relevance_of_widest_join",
+        "spearman_rho": 0.038,
+        "permutation_p": 0.843,
+        "p_holm": 1.0,
+        "lodo_cv_r2": -0.457,
+        "concordant_pairs": 2,
+        "discordant_pairs": 5
+      }
+    ],
+    "relgnn_gain": [
+      {
+        "predictor": "relevant_bits_at_risk",
+        "spearman_rho": 0.272,
+        "permutation_p": 0.743,
+        "p_holm": 1.0,
+        "lodo_cv_r2": -0.136,
+        "concordant_pairs": 3,
+        "discordant_pairs": 4
+      },
+      {
+        "predictor": "tc_jbr_max",
+        "spearman_rho": 0.246,
+        "permutation_p": 0.771,
+        "p_holm": 1.0,
+        "lodo_cv_r2": -0.161,
+        "concordant_pairs": 3,
+        "discordant_pairs": 4
+      },
+      {
+        "predictor": "jbr_eff_max_one_hop",
+        "spearman_rho": 0.311,
+        "permutation_p": 0.947,
+        "p_holm": 1.0,
+        "lodo_cv_r2": -0.18,
+        "concordant_pairs": 1,
+        "discordant_pairs": 2
+      },
+      {
+        "predictor": "relevance_of_widest_join",
+        "spearman_rho": -0.123,
+        "permutation_p": 0.573,
+        "p_holm": 1.0,
+        "lodo_cv_r2": -0.276,
+        "concordant_pairs": 3,
+        "discordant_pairs": 4
+      }
+    ],
+    "relgt_gain": [
+      {
+        "predictor": "max_join_depth",
+        "spearman_rho": 0.472,
+        "permutation_p": 0.328,
+        "p_holm": 1.0,
+        "lodo_cv_r2": -0.011,
+        "concordant_pairs": 1,
+        "discordant_pairs": 0
+      },
+      {
+        "predictor": "relevance_of_widest_join",
+        "spearman_rho": 0.097,
+        "permutation_p": 0.604,
+        "p_holm": 1.0,
+        "lodo_cv_r2": -0.276,
+        "concordant_pairs": 3,
+        "discordant_pairs": 4
+      },
+      {
+        "predictor": "relevant_bits_at_risk",
+        "spearman_rho": 0.243,
+        "permutation_p": 0.723,
+        "p_holm": 1.0,
+        "lodo_cv_r2": -0.312,
+        "concordant_pairs": 3,
+        "discordant_pairs": 4
+      },
+      {
+        "predictor": "tc_jbr_max",
+        "spearman_rho": 0.191,
+        "permutation_p": 0.758,
+        "p_holm": 1.0,
+        "lodo_cv_r2": -0.363,
+        "concordant_pairs": 3,
+        "discordant_pairs": 4
+      }
+    ]
+  }
+}
