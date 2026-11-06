@@ -44,7 +44,7 @@ def _scores(model, parent, children, batch):
     return np.concatenate(out)
 
 
-def train_and_evaluate(K, D, d, target, family, variant, seed, heads=1, config=None):
+def train_and_evaluate(K, D, d, target, family, variant, seed, heads=1, config=None, model_options=None):
     cfg = dict(TRAIN_CONFIG, **(config or {}))
     torch.manual_seed(seed)
     w = scenario_direction(K, D, d, target, seed)
@@ -54,7 +54,7 @@ def train_and_evaluate(K, D, d, target, family, variant, seed, heads=1, config=N
     batch = int(max(16, min(cfg["batch_size"], cfg["child_rows_per_batch_cap"] // K)))
     eval_batch = 4 * batch
 
-    model = build_model(family, variant, K, D, d, heads=heads)
+    model = build_model(family, variant, K, D, d, heads=heads, **(model_options or {}))
     opt = torch.optim.Adam(model.parameters(), lr=cfg["learning_rate"], weight_decay=cfg["weight_decay"])
     loss_fn = torch.nn.BCEWithLogitsLoss()
 

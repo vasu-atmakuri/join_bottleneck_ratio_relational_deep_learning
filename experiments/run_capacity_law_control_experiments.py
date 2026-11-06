@@ -10,6 +10,8 @@ results/capacity_law_controls/control_training_runs.jsonl; finished runs are ski
   variable_cardinality       {fixed, poisson, lognormal} x K {4, 16, 64} x {sum, attention} x 3           = 54
   missing_values             missing {0, 0.1, 0.3} x 6 (K, D) pairs x sum x 3                              = 54
   distribution_shift         test shift {none, 2x cardinality, bit probability 0.3} x 6 pairs x {sum, attention} x 3 = 108
+  width_and_optimization     4 (K, D) pairs x d {16,...,512} with encoder width max(128, d) x learning rate
+                             {3e-4, 1e-3, 3e-3} x layer norm {off, on} x DeepSets sum x 3                  = 360
 
 Usage: python experiments/run_capacity_law_control_experiments.py --workers 3 --threads-per-worker 2 [--list]
 """
@@ -35,8 +37,11 @@ def J(experiment, K, D, d, target, family, variant, seed, heads=1, opts=None, te
 
 
 def key(j):
-    return json.dumps([j[k] for k in ("experiment", "K", "D", "d", "target", "family", "variant", "seed", "heads",
-                                      "opts", "test_opts", "budget")], sort_keys=True)
+    base = [j[k] for k in ("experiment", "K", "D", "d", "target", "family", "variant", "seed", "heads",
+                           "opts", "test_opts", "budget")]
+    if j.get("model_options") or j.get("lr"):
+        base += [j.get("model_options"), j.get("lr")]
+    return json.dumps(base, sort_keys=True)
 
 
 def all_jobs():
@@ -80,6 +85,16 @@ def all_jobs():
                     j = J("distribution_shift", K, D, 128, "rare_pattern", fam, var, s, test_opts=topts)
                     j["shift"] = name
                     jobs.append(j)
+    # encoder width matched to d (hidden = max(128, d)), learning rate and layer normalization
+    for K, D in [(4, 32), (8, 16), (16, 8), (8, 32)]:
+        for d in [16, 64, 128, 256, 512]:
+            for lr in [3e-4, 1e-3, 3e-3]:
+                for ln in [False, True]:
+                    for s in SEEDS:
+                        j = J("width_and_optimization", K, D, d, "rare_pattern", "deepsets", "sum", s)
+                        j["model_options"] = {"hidden": max(128, d), "layer_norm": ln}
+                        j["lr"] = lr
+                        jobs.append(j)
     return jobs
 
 
@@ -97,9 +112,11 @@ def _run(j):
         if j["budget"] != 1.0:
             cfg = {"max_steps": int(TRAIN_CONFIG["max_steps"] * j["budget"]),
                    "min_steps": max(1000, int(TRAIN_CONFIG["min_steps"] * j["budget"]))}
-        if j["experiment"] in ("embedding_dimension_sweep", "training_budget"):
+        if j.get("lr"):
+            cfg = dict(cfg or {}, learning_rate=j["lr"])
+        if j["experiment"] in ("embedding_dimension_sweep", "training_budget", "width_and_optimization"):
             out = train_and_evaluate(j["K"], j["D"], j["d"], j["target"], j["family"], j["variant"], j["seed"],
-                                     heads=j["heads"], config=cfg)
+                                     heads=j["heads"], config=cfg, model_options=j.get("model_options"))
         else:
             out = train_and_evaluate_variant(j["K"], j["D"], j["d"], j["target"], j["family"], j["variant"],
                                              j["seed"], heads=j["heads"], opts=j["opts"], test_opts=j["test_opts"],

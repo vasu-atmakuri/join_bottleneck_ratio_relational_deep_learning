@@ -51,15 +51,21 @@ def pool(h, kind, mask=None):
 
 
 class DeepSetsAggregator(nn.Module):
-    def __init__(self, D, d, aggregator):
+    """hidden: width of the encoder and decoder MLPs (default 128). With hidden < d the aggregated vector of a sum or
+    mean aggregator spans at most `hidden` dimensions, so width-sweep experiments set hidden >= d.
+    layer_norm: normalize the aggregated vector before the decoder."""
+
+    def __init__(self, D, d, aggregator, hidden=None, layer_norm=False):
         super().__init__()
+        h = hidden or HIDDEN
         self.aggregator = aggregator
-        self.phi = mlp([D, HIDDEN, HIDDEN, d])
-        self.parent_encoder = mlp([D, HIDDEN, HIDDEN], final_activation=True)
-        self.rho = mlp([d + HIDDEN, HIDDEN, HIDDEN, 1])
+        self.phi = mlp([D, h, h, d])
+        self.parent_encoder = mlp([D, h, h], final_activation=True)
+        self.norm = nn.LayerNorm(d) if layer_norm else nn.Identity()
+        self.rho = mlp([d + h, h, h, 1])
 
     def forward(self, parent, children, mask=None):
-        agg = pool(self.phi(children), self.aggregator, mask)
+        agg = self.norm(pool(self.phi(children), self.aggregator, mask))
         return self.rho(torch.cat([agg, self.parent_encoder(parent)], dim=-1)).squeeze(-1)
 
 
@@ -121,9 +127,10 @@ class DenormalizedMLP(nn.Module):
         return self.net(torch.cat([parent, ordered.reshape(B, K * D)], dim=-1)).squeeze(-1)
 
 
-def build_model(family, variant, K, D, d, heads=1):
+def build_model(family, variant, K, D, d, heads=1, **options):
     if family == "deepsets":
-        return DeepSetsAggregator(D, d, variant)
+        return DeepSetsAggregator(D, d, variant, hidden=options.get("hidden"),
+                                  layer_norm=options.get("layer_norm", False))
     if family == "gnn":
         return GNNAggregator(D, d, variant, heads=heads)
     if family == "denormalized":
