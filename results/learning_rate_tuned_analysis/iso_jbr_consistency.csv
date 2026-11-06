@@ -1,0 +1,10 @@
+target,model,coefficient_of_variation
+distributional,max,0.31626623894029576
+distributional,mean,0.12346012417847756
+distributional,sum,0.09879941158235662
+mean_based,max,0.25219927625754485
+mean_based,mean,0.000342503695524633
+mean_based,sum,0.0003276234591891012
+rare_pattern,max,0.1532988266042749
+rare_pattern,mean,0.12522892700441549
+rare_pattern,sum,0.08411450644790654
