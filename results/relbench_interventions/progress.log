@@ -272,3 +272,4 @@
 [06:17:52] rel-trial/site-success attention d512 lr0.001 s0: ERROR KeyError('mae')
 [06:18:03] rel-trial/site-success attention d512 lr0.001 s1: ERROR KeyError('mae')
 126/216 runs finished successfully
+PUSHED

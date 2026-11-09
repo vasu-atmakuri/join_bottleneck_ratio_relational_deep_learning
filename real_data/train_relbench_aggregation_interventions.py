@@ -143,7 +143,7 @@ def train_one(job, task, data, col_stats, loaders, tables):
         model.train()
         return np.concatenate(out)
 
-    metric = "roc_auc" if classification else "mae"
+    metric = "roc_auc" if classification else "nmae"  # RelBench regression metric: MAE / train-split std
     better = (lambda a, b: a > b) if classification else (lambda a, b: a < b)
     best, best_epoch, t0 = None, -1, time.time()
     for epoch in range(CONFIG["epochs"]):
