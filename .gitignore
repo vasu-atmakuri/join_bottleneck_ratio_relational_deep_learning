@@ -4,3 +4,4 @@ __pycache__/
 .DS_Store
 logs/
 data/relbench_download_cache/
+data/relbench_graph_cache/
