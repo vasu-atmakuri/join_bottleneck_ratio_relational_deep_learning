@@ -7,8 +7,9 @@ For each task and each one-hop join (child table -> entity table):
   1. take up to --max-train-rows rows of the task's training split (entity id, timestamp, label);
   2. read only the child rows that point to those entities and are older than the validation timestamp
      (the training timestamps are all earlier than it), streaming row groups with pyarrow;
-  3. discretize every child feature column as in extract_relbench_join_statistics.py and build, per entity, the
-     normalized histogram of each feature plus log(1 + number of children);
+  3. stream those child rows in batches, discretize every feature column (quantile bins, categories or hashed
+     buckets, fixed on the first batch) and accumulate, per entity, the normalized histogram of each feature plus
+     log(1 + number of children); memory stays bounded by the number of entities, not the number of child rows;
   4. relevance = 3-fold cross-validated predictive skill of those aggregated join features alone for the label:
      classification 2 * (AUROC - 0.5) clipped at 0 (logistic regression), regression R^2 clipped at 0 (ridge).
 
@@ -28,6 +29,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pyarrow as pa
+import pyarrow.compute  # noqa: F401
 import pyarrow.dataset as pads
 import pyarrow.parquet as pq
 import yaml
@@ -71,7 +73,52 @@ def relevance(X, y, classification):
     return max(0.0, r2), r2
 
 
-def join_features(path, fk_col, time_col, feats, entity_ids, cutoff):
+class StreamingEncoder:
+    """Discretizes a column consistently across row batches: numeric and time columns use quantile edges taken from
+    the first batch; low-cardinality categorical columns keep the categories of the first batch (others -> 'other');
+    high-cardinality and text columns are hashed into N_BINS buckets. Missing values are code 0."""
+
+    def __init__(self):
+        self.kind, self.edges, self.mapping = None, None, None
+
+    def encode(self, arr):
+        n = len(arr)
+        missing = np.asarray(arr.is_null().to_numpy(zero_copy_only=False), dtype=bool)
+        codes = np.zeros(n, dtype=np.int16)
+        valid = np.nonzero(~missing)[0]
+        t = arr.type
+        if pa.types.is_timestamp(t) or pa.types.is_date(t):
+            arr = pa.compute.cast(arr, pa.int64(), safe=False) if pa.types.is_timestamp(t) else \
+                pa.compute.cast(pa.compute.cast(arr, pa.date32()), pa.int32())
+            t = arr.type
+        numeric = pa.types.is_integer(t) or pa.types.is_floating(t) or pa.types.is_boolean(t) or pa.types.is_decimal(t)
+        if self.kind is None:
+            self.kind = "numeric" if numeric else "categorical"
+        if len(valid) == 0:
+            return codes
+        if self.kind == "numeric":
+            vals = np.asarray(pa.compute.cast(arr, pa.float64(), safe=False).to_numpy(zero_copy_only=False),
+                              dtype=float)[valid]
+            if self.edges is None:
+                fin = vals[np.isfinite(vals)]
+                self.edges = (np.unique(np.quantile(fin, np.linspace(0, 1, ex.N_BINS + 1)[1:-1]))
+                              if len(fin) else np.array([0.0]))
+            codes[valid] = np.searchsorted(self.edges, vals, side="right") + 1
+        else:
+            s = pd.Series(arr.to_pylist(), dtype="object").iloc[valid].astype(str)
+            if self.mapping is None:
+                vc = s.value_counts()
+                self.mapping = ({v: i + 2 for i, v in enumerate(vc.index)} if len(vc) <= ex.TOP_CATEGORIES
+                                else "hash")
+            if self.mapping == "hash":
+                codes[valid] = (pd.util.hash_pandas_object(s, index=False).values % ex.N_BINS).astype(np.int16) + 1
+            else:
+                codes[valid] = s.map(self.mapping).fillna(1).astype(np.int16).values
+        return codes
+
+
+def join_features(path, fk_col, time_col, feats, entity_ids, cutoff, batch_rows=200_000):
+    """Per-entity normalized histograms of the child features, streamed in row batches (bounded memory)."""
     dset = pads.dataset(path, format="parquet")
     fk_type = dset.schema.field(fk_col).type
     try:
@@ -81,22 +128,32 @@ def join_features(path, fk_col, time_col, feats, entity_ids, cutoff):
     flt = pads.field(fk_col).isin(keys)
     if time_col:
         ts = pa.scalar(pd.Timestamp(cutoff).to_pydatetime(), type=pa.timestamp("us"))
-        try:
-            flt = flt & (pads.field(time_col).cast(pa.timestamp("us")) < ts)
-        except Exception:
-            pass
-    tbl = dset.to_table(columns=[fk_col] + feats, filter=flt)
-    keys_s = pd.Series(tbl.column(fk_col).to_pylist()).astype(str)
-    parts = {"__count": keys_s.value_counts()}
+        flt = flt & (pads.field(time_col).cast(pa.timestamp("us")) < ts)
+    encoders = {c: StreamingEncoder() for c in feats}
+    parts = {c: [] for c in feats}
+    count_parts, n_rows = [], 0
+    for batch in dset.to_batches(columns=[fk_col] + feats, filter=flt, batch_size=batch_rows):
+        if batch.num_rows == 0:
+            continue
+        k = pd.Series(batch.column(0).to_pylist()).astype(str).values
+        n_rows += batch.num_rows
+        count_parts.append(pd.Series(k).value_counts())
+        for i, c in enumerate(feats, start=1):
+            codes = encoders[c].encode(batch.column(i))
+            parts[c].append(pd.DataFrame({"k": k, "v": codes}).groupby(["k", "v"]).size())
+        del batch
+    if not count_parts:
+        return pd.DataFrame(), 0
+    counts = pd.concat(count_parts).groupby(level=0).sum()
     blocks = []
     for c in feats:
-        codes, _ = ex.discretize(tbl.column(c))
-        oh = pd.get_dummies(pd.Series(codes, name=c).astype("category"), prefix=c, dtype=np.float32)
-        oh["__key"] = keys_s.values
-        blocks.append(oh.groupby("__key").mean())
-    agg = pd.concat(blocks, axis=1) if blocks else pd.DataFrame(index=parts["__count"].index)
-    agg["log_child_count"] = np.log1p(parts["__count"].reindex(agg.index).fillna(0).values)
-    return agg, tbl.num_rows
+        h = pd.concat(parts[c]).groupby(level=[0, 1]).sum().unstack(fill_value=0).astype(np.float32)
+        h = h.div(h.sum(axis=1), axis=0)
+        h.columns = [f"{c}={v}" for v in h.columns]
+        blocks.append(h)
+    agg = pd.concat(blocks, axis=1).reindex(counts.index).fillna(0.0) if blocks else pd.DataFrame(index=counts.index)
+    agg["log_child_count"] = np.log1p(counts.values)
+    return agg, n_rows
 
 
 def process_dataset(name, repo, tasks_wanted, args, done):
@@ -169,7 +226,7 @@ def process_dataset(name, repo, tasks_wanted, args, done):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--max-train-rows", type=int, default=50_000)
+    ap.add_argument("--max-train-rows", type=int, default=20_000)
     ap.add_argument("--keep-data", action="store_true")
     args = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)

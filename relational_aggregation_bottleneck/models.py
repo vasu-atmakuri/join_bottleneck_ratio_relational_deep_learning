@@ -10,6 +10,13 @@ DeepSetsAggregator   phi (3-layer MLP, output d) -> sum | mean | max over childr
 GNNAggregator        one heterogeneous message-passing layer on the bipartite parent-child graph:
                      h_p' = ReLU(W_self h_p + AGG_c W_msg h_c), with AGG in {SumAgg, MeanAgg, AttnAgg};
                      AttnAgg is multi-head attention with the parent embedding as query (total width d).
+TwoLayerGNNAggregator two message-passing layers on the same bipartite graph, as in relational deep learning where
+                     every foreign key is used in both directions:
+                       layer 1 (parent -> child):  h_c' = ReLU(W_c h_c + W_pc h_p)       (omitted when downward=False)
+                       layer 2 (child -> parent):  h_p' = ReLU(W_self h_p + AGG_c W_msg h_c')
+                     With the downward message each child can compare itself with its parent before pooling, so the
+                     pooled vector can carry query-dependent evidence instead of a summary of the whole set. With
+                     downward=False layer 1 is a child-only transformation of equal depth (control for depth).
 DenormalizedMLP      oracle-style baseline that bypasses aggregation: the parent features and all child rows
                      (sorted lexicographically, so the input is permutation invariant) are concatenated and
                      fed to an MLP.
@@ -112,6 +119,28 @@ class GNNAggregator(nn.Module):
         return self.head(h).squeeze(-1)
 
 
+class TwoLayerGNNAggregator(nn.Module):
+    def __init__(self, D, d, architecture, downward=True):
+        super().__init__()
+        self.architecture, self.downward, self.heads = architecture, downward, 0
+        self.child_encoder = mlp([D, HIDDEN, d], final_activation=True)
+        self.parent_encoder = mlp([D, HIDDEN, d], final_activation=True)
+        self.w_child = nn.Linear(d, d)
+        self.w_parent_to_child = nn.Linear(d, d, bias=False)
+        self.w_self = nn.Linear(d, d)
+        self.w_msg = nn.Linear(d, d)
+        self.head = mlp([d, HIDDEN, 1])
+
+    def forward(self, parent, children, mask=None):
+        hp = self.parent_encoder(parent)
+        hc = self.child_encoder(children)
+        down = self.w_parent_to_child(hp).unsqueeze(1) if self.downward else 0.0
+        hc = torch.relu(self.w_child(hc) + down)
+        kind = "sum" if self.architecture == "SumAgg" else "mean"
+        h = torch.relu(self.w_self(hp) + pool(self.w_msg(hc), kind, mask))
+        return self.head(h).squeeze(-1)
+
+
 class DenormalizedMLP(nn.Module):
     def __init__(self, K, D):
         super().__init__()
@@ -133,6 +162,8 @@ def build_model(family, variant, K, D, d, heads=1, **options):
                                   layer_norm=options.get("layer_norm", False))
     if family == "gnn":
         return GNNAggregator(D, d, variant, heads=heads)
+    if family == "gnn_two_layer":
+        return TwoLayerGNNAggregator(D, d, variant, downward=options.get("downward", True))
     if family == "denormalized":
         return DenormalizedMLP(K, D)
     raise ValueError(family)

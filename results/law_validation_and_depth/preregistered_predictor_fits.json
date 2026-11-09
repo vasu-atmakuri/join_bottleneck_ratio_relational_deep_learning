@@ -1,0 +1,67 @@
+{
+  "rare_pattern": {
+    "n_training_configurations": 76,
+    "corrected_law_in_sample_r2": 0.7259272133464014,
+    "nominal_jbr": {
+      "floor": 0.6837499183164442,
+      "ceiling": 0.9999999999999999,
+      "slope": 0.7636828924499047,
+      "midpoint_log2_jbr": 0.6664316741131198,
+      "amplitude": 0.31625008168355573,
+      "r2": 0.48564847969485514,
+      "n_points": 76.0,
+      "midpoint_inside_probed_range": 1.0
+    },
+    "multiset_jbr": {
+      "floor": 0.6764717079331297,
+      "ceiling": 0.9999999999999999,
+      "slope": 0.4437226633665478,
+      "midpoint_log2_jbr": -0.3373305307795168,
+      "amplitude": 0.32352829206687017,
+      "r2": 0.31035311813232147,
+      "n_points": 76.0,
+      "midpoint_inside_probed_range": 1.0
+    },
+    "corrected_law": {
+      "floor": 0.45499602730553235,
+      "ceiling": 0.9999999999999999,
+      "slope": 1.083531006187313,
+      "midpoint": 6.686719823558911,
+      "exponent_H": 0.9162131024411494,
+      "exponent_d": 0.218218838635482
+    }
+  },
+  "distributional": {
+    "n_training_configurations": 76,
+    "corrected_law_in_sample_r2": 0.7022096826710328,
+    "nominal_jbr": {
+      "floor": 0.6892762801343193,
+      "ceiling": 0.9999999999999999,
+      "slope": 0.6947222450867562,
+      "midpoint_log2_jbr": 0.47946017785654227,
+      "amplitude": 0.3107237198656806,
+      "r2": 0.44914412818068916,
+      "n_points": 76.0,
+      "midpoint_inside_probed_range": 1.0
+    },
+    "multiset_jbr": {
+      "floor": 0.7027429400321106,
+      "ceiling": 0.9999999999999999,
+      "slope": 0.4770854265858601,
+      "midpoint_log2_jbr": -0.9989723642599799,
+      "amplitude": 0.2972570599678893,
+      "r2": 0.28703271272651265,
+      "n_points": 76.0,
+      "midpoint_inside_probed_range": 1.0
+    },
+    "corrected_law": {
+      "floor": 0.4627151428219816,
+      "ceiling": 0.9999999999999999,
+      "slope": 1.0250219486369394,
+      "midpoint": 6.684174870672994,
+      "exponent_H": 0.8994302526932804,
+      "exponent_d": 0.20512249602042076
+    }
+  },
+  "created_utc": "2026-11-09T04:54:16Z"
+}
