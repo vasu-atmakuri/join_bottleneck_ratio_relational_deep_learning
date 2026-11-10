@@ -1,0 +1,202 @@
+{
+  "real_task_gain_vs_sum": [
+    {
+      "aggregation": "attention",
+      "metric": "nmae",
+      "n_tasks": 5,
+      "mean_gain_vs_sum": -0.007,
+      "ci95": [
+        -0.013456006916717658,
+        0.00028502957142411274
+      ],
+      "tasks_better_than_sum": 2
+    },
+    {
+      "aggregation": "attention",
+      "metric": "roc_auc",
+      "n_tasks": 7,
+      "mean_gain_vs_sum": -2.516,
+      "ci95": [
+        -3.3521605502463627,
+        -1.6977472782582335
+      ],
+      "tasks_better_than_sum": 0
+    },
+    {
+      "aggregation": "attention_root",
+      "metric": "nmae",
+      "n_tasks": 5,
+      "mean_gain_vs_sum": -0.011,
+      "ci95": [
+        -0.01685412096669468,
+        -0.004297136263894103
+      ],
+      "tasks_better_than_sum": 1
+    },
+    {
+      "aggregation": "attention_root",
+      "metric": "roc_auc",
+      "n_tasks": 7,
+      "mean_gain_vs_sum": -0.374,
+      "ci95": [
+        -1.5791881271712962,
+        0.5858718094079396
+      ],
+      "tasks_better_than_sum": 5
+    },
+    {
+      "aggregation": "mean",
+      "metric": "nmae",
+      "n_tasks": 5,
+      "mean_gain_vs_sum": -0.003,
+      "ci95": [
+        -0.005472639079629174,
+        -0.0008339512768140895
+      ],
+      "tasks_better_than_sum": 1
+    },
+    {
+      "aggregation": "mean",
+      "metric": "roc_auc",
+      "n_tasks": 7,
+      "mean_gain_vs_sum": -0.96,
+      "ci95": [
+        -2.421051964478452,
+        0.46372475776557504
+      ],
+      "tasks_better_than_sum": 3
+    },
+    {
+      "aggregation": "sum_attention",
+      "metric": "nmae",
+      "n_tasks": 5,
+      "mean_gain_vs_sum": -0.001,
+      "ci95": [
+        -0.006871762261519715,
+        0.0038323019416973024
+      ],
+      "tasks_better_than_sum": 3
+    },
+    {
+      "aggregation": "sum_attention",
+      "metric": "roc_auc",
+      "n_tasks": 7,
+      "mean_gain_vs_sum": 0.014,
+      "ci95": [
+        -0.14920156159814796,
+        0.19876453716057282
+      ],
+      "tasks_better_than_sum": 3
+    }
+  ],
+  "planted_signal": [
+    {
+      "join": "rel-avito/SearchInfo",
+      "label": "fixed_query",
+      "layers": 1,
+      "attention_root": 1.0,
+      "mean": 1.0,
+      "sum": 1.0,
+      "sum_attention": 1.0
+    },
+    {
+      "join": "rel-avito/SearchInfo",
+      "label": "fixed_query",
+      "layers": 2,
+      "attention_root": 1.0,
+      "mean": 0.999,
+      "sum": 1.0,
+      "sum_attention": 1.0
+    },
+    {
+      "join": "rel-avito/SearchInfo",
+      "label": "parent_query",
+      "layers": 1,
+      "attention_root": 0.965,
+      "mean": 0.963,
+      "sum": 0.932,
+      "sum_attention": 0.956
+    },
+    {
+      "join": "rel-avito/SearchInfo",
+      "label": "parent_query",
+      "layers": 2,
+      "attention_root": 0.976,
+      "mean": 0.972,
+      "sum": 0.961,
+      "sum_attention": 0.967
+    },
+    {
+      "join": "rel-f1/results",
+      "label": "fixed_query",
+      "layers": 1,
+      "attention_root": 1.0,
+      "mean": 0.987,
+      "sum": 1.0,
+      "sum_attention": 1.0
+    },
+    {
+      "join": "rel-f1/results",
+      "label": "fixed_query",
+      "layers": 2,
+      "attention_root": 1.0,
+      "mean": 0.992,
+      "sum": 0.999,
+      "sum_attention": 0.999
+    },
+    {
+      "join": "rel-f1/results",
+      "label": "parent_query",
+      "layers": 1,
+      "attention_root": 0.838,
+      "mean": 0.748,
+      "sum": 0.681,
+      "sum_attention": 0.73
+    },
+    {
+      "join": "rel-f1/results",
+      "label": "parent_query",
+      "layers": 2,
+      "attention_root": 0.707,
+      "mean": 0.696,
+      "sum": 0.852,
+      "sum_attention": 0.887
+    },
+    {
+      "join": "rel-stack/badges",
+      "label": "fixed_query",
+      "layers": 1,
+      "attention_root": 1.0,
+      "mean": 1.0,
+      "sum": 1.0,
+      "sum_attention": 1.0
+    },
+    {
+      "join": "rel-stack/badges",
+      "label": "fixed_query",
+      "layers": 2,
+      "attention_root": 1.0,
+      "mean": 1.0,
+      "sum": 1.0,
+      "sum_attention": 1.0
+    },
+    {
+      "join": "rel-stack/badges",
+      "label": "parent_query",
+      "layers": 1,
+      "attention_root": 0.958,
+      "mean": 0.929,
+      "sum": 0.921,
+      "sum_attention": 0.929
+    },
+    {
+      "join": "rel-stack/badges",
+      "label": "parent_query",
+      "layers": 2,
+      "attention_root": 0.996,
+      "mean": 0.977,
+      "sum": 0.991,
+      "sum_attention": 0.992
+    }
+  ]
+}
