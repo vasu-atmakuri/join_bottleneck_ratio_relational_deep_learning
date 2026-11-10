@@ -55,14 +55,20 @@ REAL_TASKS = {
     "rel-stack": ["user-engagement", "user-badge", "post-votes"],
     "rel-avito": ["user-visits", "user-clicks", "ad-ctr"],
 }
-# (dataset, RelBench task that supplies seed entities and timestamps, child table, preferred foreign key column)
+# (dataset, RelBench task that supplies seed entities and timestamps, child table, preferred foreign key column,
+#  training seeds). The rel-trial join failed during label construction and is not run.
 PLANTED_JOINS = [
-    ("rel-f1", "driver-dnf", "results", "driverId"),
-    ("rel-stack", "user-engagement", "badges", "UserId"),
-    ("rel-avito", "user-visits", "SearchInfo", "UserID"),
-    ("rel-avito", "user-visits", "VisitStream", "UserID"),
-    ("rel-trial", "study-outcome", "outcomes", "nct_id"),
+    ("rel-f1", "driver-dnf", "results", "driverId", [0, 1]),
+    ("rel-stack", "user-engagement", "badges", "UserId", [0, 1, 2]),
+    ("rel-avito", "user-visits", "SearchInfo", "UserID", [0, 1, 2]),
+    ("rel-avito", "user-visits", "VisitStream", "UserID", [0, 1]),
+    ("rel-stack", "user-engagement", "posts", "OwnerUserId", [0, 1, 2]),
+    ("rel-stack", "user-engagement", "comments", "UserId", [0, 1, 2]),
 ]
+# Longer-training check on original tasks: three times the step budget, three seeds, d = 128.
+LONGER_TRAINING_TASKS = {"rel-f1": ["driver-dnf", "driver-top3"], "rel-stack": ["user-engagement", "user-badge"],
+                         "rel-avito": ["user-visits"], "rel-trial": ["study-outcome"]}
+LONGER_TRAINING_EPOCHS = 12
 LEARNING_RATE_BY_WIDTH = {32: 5e-3, 128: 2e-3, 512: 1e-3}
 CONFIG = {"epochs": 4, "max_steps_per_epoch": 60, "batch_size": 256}
 FANOUTS = {1: [64], 2: [64, 32]}
@@ -84,15 +90,22 @@ def all_jobs():
                     for s in [0, 1]:
                         jobs.append({"family": "real_tasks_attention_variants", "dataset": ds, "task": t,
                                      "label": "original", "aggregation": a, "layers": 2, "width": w, "seed": s})
-    for ds, t, child, _ in PLANTED_JOINS:
+    for ds, tasks in LONGER_TRAINING_TASKS.items():
+        for t in tasks:
+            for a in ["sum", "mean", "attention_root", "sum_attention"]:
+                for s in [0, 1, 2]:
+                    jobs.append({"family": "real_tasks_longer_training", "dataset": ds, "task": t, "label": "original",
+                                 "aggregation": a, "layers": 2, "width": 128, "seed": s,
+                                 "epochs": LONGER_TRAINING_EPOCHS})
+    for ds, t, child, _, seeds in PLANTED_JOINS:
         for label in ["parent_query", "fixed_query"]:
             for a in ["sum", "mean", "attention_root", "sum_attention"]:
                 for layers in [1, 2]:
-                    for s in [0, 1]:
+                    for s in seeds:
                         jobs.append({"family": "planted_signal", "dataset": ds, "task": f"{t}|{child}", "label": label,
                                      "aggregation": a, "layers": layers, "width": 128, "seed": s})
             for a in ["sum", "attention_root"]:
-                for s in [0, 1]:
+                for s in seeds:
                     jobs.append({"family": "planted_signal", "dataset": ds, "task": f"{t}|{child}", "label": label,
                                  "aggregation": a, "layers": 1, "width": 32, "seed": s})
     for j in jobs:
@@ -294,7 +307,10 @@ def build_planted_database(dataset_name, seed_task, child_table, preferred_fk, l
         tables[split] = lt.reset_index(drop=True)
         log(f"  {split}: {len(lt)} seeds, children per seed median {lt.n.median():.0f} max {lt.n.max()}, "
             f"positive rate parent_query {lt.parent.mean():.3f}, fixed_query {lt.fixed.mean():.3f}")
-    meta = {"entity": entity, "fk": fk, "column": col, "n_values": int(values.nunique()), "fixed_values": len(best)}
+    meta = {"entity": entity, "fk": fk, "column": col, "n_values": int(values.nunique()), "fixed_values": len(best),
+            "test_seeds": int(len(tables["test"])),
+            "train_positive_rate": float(tables["train"].parent.mean()),
+            "test_positive_rate": float(tables["test"].parent.mean())}
     return db, tables, meta
 
 
@@ -309,7 +325,7 @@ def prepare_planted(dataset_name, task_spec, label, layers, log, _cache={}):
 
     seed_task, child_table = task_spec.split("|")
     if (dataset_name, task_spec) not in _cache:
-        pref = {(d, t, c): fk for d, t, c, fk in PLANTED_JOINS}[(dataset_name, seed_task, child_table)]
+        pref = {(d, t, c): fk for d, t, c, fk, _ in PLANTED_JOINS}[(dataset_name, seed_task, child_table)]
         db, tables, meta = build_planted_database(dataset_name, seed_task, child_table, pref, log)
         stypes = get_stype_proposal(db)
         for table, cols in stypes.items():
@@ -363,7 +379,7 @@ def train_one(job, prep):
 
     better = (lambda a, b: a > b) if cls else (lambda a, b: a < b)
     best, best_epoch, t0 = None, -1, time.time()
-    for epoch in range(CONFIG["epochs"]):
+    for epoch in range(job.get("epochs", CONFIG["epochs"])):
         for step, batch in enumerate(prep["loaders"]["train"]):
             if step >= CONFIG["max_steps_per_epoch"]:
                 break
@@ -401,7 +417,7 @@ def worker(jobs, threads, log_path):
         groups.setdefault((j["family"], j["dataset"], j["task"], j["label"], j["layers"]), []).append(j)
     for (fam, ds, task, label, layers), js in groups.items():
         try:
-            prep = prepare_real(ds, task, layers) if fam == "real_tasks_attention_variants" else \
+            prep = prepare_real(ds, task, layers) if fam.startswith("real_tasks") else \
                 prepare_planted(ds, task, label, layers, log)
         except Exception as e:
             import traceback
@@ -447,7 +463,7 @@ def main():
     with open(log, "a") as f:
         f.write(f"{len(jobs)} runs in plan, {len(jobs) - len(todo)} finished, {len(todo)} to run\n")
     # planted-signal runs first (the new evidence), then real-task variants; one dataset per worker at a time
-    order = {"planted_signal": 0, "real_tasks_attention_variants": 1}
+    order = {"planted_signal": 0, "real_tasks_attention_variants": 1, "real_tasks_longer_training": 2}
     todo.sort(key=lambda j: (order[j["family"]], j["dataset"], j["task"], j["label"], j["layers"]))
     datasets = sorted({j["dataset"] for j in todo})
     groups = [[] for _ in range(args.workers)]

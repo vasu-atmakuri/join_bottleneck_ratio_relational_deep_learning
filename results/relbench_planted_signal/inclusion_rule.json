@@ -1,0 +1,14 @@
+{
+  "purpose": "Inclusion rule for planted-signal joins in the manuscript figures and main table, fixed before the runs on the rel-stack posts and comments joins and before the third seed.",
+  "created_utc": "2026-11-10T16:06:22Z",
+  "criteria": {
+    "minimum_test_seeds": 1000,
+    "maximum_abs_difference_in_parent_query_positive_rate_between_train_and_test": 0.15,
+    "learnability": "the best aggregator (any layers, d = 128) reaches test AUROC >= 0.90 on the parent_query label among test seeds with K <= 4 admissible children"
+  },
+  "applies_to": "every planted join, including those run before this rule was written (rel-f1 results, rel-stack badges, rel-avito SearchInfo, rel-avito VisitStream); excluded joins are still reported in the repository tables",
+  "new_joins_after_this_rule": [
+    "rel-stack posts.OwnerUserId -> users",
+    "rel-stack comments.UserId -> users"
+  ]
+}

@@ -8,6 +8,10 @@ out_of_sample_validation
   validation from {3e-4, 1e-3} (plus 1e-4 when d >= 192). Predicted AUROC for every configuration is written by
   analysis/preregister_capacity_law_predictions.py BEFORE these runs and compared afterwards.
 
+out_of_sample_validation_gnn
+  The same 36 configurations for one-layer message passing with sum aggregation (rare_pattern, 3 seeds); predictions
+  from analysis/preregister_capacity_law_predictions_gnn.py are frozen before these runs.
+
 two_layer_depth
   Two message-passing layers on the parent-child graph, as in relational deep learning where each foreign key is used
   in both directions. With the downward (parent -> child) message, children can compare themselves with the parent
@@ -64,6 +68,10 @@ def all_jobs():
         lrs = [3e-4, 1e-3] + ([1e-4] if d >= 192 else [])
         for t, s, lr in product(SET_TARGETS, [0, 1], lrs):
             jobs.append(J("out_of_sample_validation", K, D, d, t, "deepsets", "sum", s, lr, {"hidden": max(128, d)}))
+    for K, D, d in out_of_sample_configurations():
+        lrs = [3e-4, 1e-3] + ([1e-4] if d >= 192 else [])
+        for s, lr in product([0, 1, 2], lrs):
+            jobs.append(J("out_of_sample_validation_gnn", K, D, d, "rare_pattern", "gnn", "SumAgg", s, lr))
     variants = [("SumAgg", True), ("MeanAgg", True), ("SumAgg", False)]
     for sc in architecture_scenarios():
         for t, (v, down), s, lr in product(SET_TARGETS, variants, [0, 1, 2], [3e-4, 1e-3]):
@@ -116,7 +124,7 @@ def main():
             if r.get("status") == "ok":
                 done.add(key(r))
     todo = [j for j in jobs if key(j) not in done]
-    order = ["out_of_sample_validation", "two_layer_depth", "two_layer_depth_extended"]
+    order = ["out_of_sample_validation", "two_layer_depth", "two_layer_depth_extended", "out_of_sample_validation_gnn"]
     todo.sort(key=lambda j: (order.index(j["experiment"]), j["K"] * j["D"]))
     print(f"{len(jobs)} runs in plan, {len(jobs) - len(todo)} finished, {len(todo)} to run", flush=True)
     t0, n, errors = time.time(), 0, 0

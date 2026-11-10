@@ -1,0 +1,37 @@
+{
+  "n_training_configurations": 63,
+  "nominal_jbr": {
+    "in_sample_r2": 0.9301564984025079,
+    "floor": 0.5171810077710904,
+    "ceiling": 0.9999999999999999,
+    "slope": 1.3629718991778401,
+    "midpoint_log2_jbr": 1.4995985315353435,
+    "amplitude": 0.48281899222890945,
+    "r2": 0.9301564984025079,
+    "n_points": 63.0,
+    "midpoint_inside_probed_range": 1.0
+  },
+  "transferred_law": {
+    "exponent_H": 0.9162131024411494,
+    "exponent_d": 0.218218838635482,
+    "in_sample_r2": 0.9500482345582617,
+    "floor": 0.49619696620145154,
+    "ceiling": 0.9999999999999999,
+    "slope": 1.3838534572861212,
+    "midpoint_log2_jbr": 6.602608178608924,
+    "amplitude": 0.5038030337985484,
+    "r2": 0.9500482345582617,
+    "n_points": 63.0,
+    "midpoint_inside_probed_range": 1.0
+  },
+  "refitted_law": {
+    "in_sample_r2": 0.9613557102261905,
+    "floor": 0.49716534844599186,
+    "ceiling": 0.9998330625533586,
+    "slope": 1.3599662203638339,
+    "midpoint": 6.688399003895396,
+    "exponent_H": 1.0560563106325511,
+    "exponent_d": 0.2905448648666294
+  },
+  "created_utc": "2026-11-10T16:08:39Z"
+}
