@@ -127,6 +127,42 @@
       "sum_attention": 0.967
     },
     {
+      "join": "rel-avito/VisitStream",
+      "label": "fixed_query",
+      "layers": 1,
+      "attention_root": 0.997,
+      "mean": 0.999,
+      "sum": 1.0,
+      "sum_attention": 0.996
+    },
+    {
+      "join": "rel-avito/VisitStream",
+      "label": "fixed_query",
+      "layers": 2,
+      "attention_root": 0.998,
+      "mean": 0.999,
+      "sum": 1.0,
+      "sum_attention": 0.998
+    },
+    {
+      "join": "rel-avito/VisitStream",
+      "label": "parent_query",
+      "layers": 1,
+      "attention_root": 0.543,
+      "mean": 0.631,
+      "sum": 0.534,
+      "sum_attention": 0.527
+    },
+    {
+      "join": "rel-avito/VisitStream",
+      "label": "parent_query",
+      "layers": 2,
+      "attention_root": 0.528,
+      "mean": 0.511,
+      "sum": 0.497,
+      "sum_attention": 0.558
+    },
+    {
       "join": "rel-f1/results",
       "label": "fixed_query",
       "layers": 1,

@@ -233,6 +233,33 @@ def interventions(path):
     save(fig, "relbench_interventions")
 
 
+def planted_by_children(path):
+    """Parent-query label on real tables: test AUROC within bins of admissible children K (joins with at least 1000
+    test seeds on which the label is learnable at small K; see the manuscript for the excluded joins)."""
+    if not path.exists():
+        return
+    b = pd.read_csv(path)
+    b = b[(b.label == "parent_query") & (b.width == 128)]
+    joins = [("rel-stack/badges", "(a) stack: users <- badges"), ("rel-avito/SearchInfo", "(b) avito: users <- searches")]
+    col = {"sum": "#1f77b4", "mean": "#ff7f0e", "attention_root": "#2ca02c", "sum_attention": "#9467bd"}
+    name = {"sum": "sum", "mean": "mean", "attention_root": "attention", "sum_attention": "sum + attention"}
+    fig, axes = plt.subplots(1, 2, figsize=(ONE_COL, 1.95), sharey=True)
+    for ax, (j, title) in zip(axes, joins):
+        g = b[b["join"] == j]
+        for (agg, layers), h in g.groupby(["aggregation", "layers"]):
+            h = h.sort_values("k_mid")
+            ax.plot(np.log2(h.k_mid), h.auroc, marker="o" if layers == 1 else "s", ms=2.3,
+                    ls="-" if layers == 1 else "--", color=col[agg], lw=.8,
+                    label=f"{name[agg]}, {layers} layer{'s' if layers == 2 else ''}")
+        ax.set_title(title, fontsize=7)
+        ax.set_xlabel(r"$\log_2 K$")
+    axes[0].set_ylabel("test AUROC, query label")
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, frameon=False, fontsize=5.3, ncol=4, loc="lower center", bbox_to_anchor=(0.5, -0.16))
+    fig.tight_layout(w_pad=0.4)
+    save(fig, "planted_signal_by_children")
+
+
 def main():
     sel = pd.read_csv(RES / "learning_rate_tuned_analysis" / "selected_runs.csv")
     mult = pd.read_csv(RES / "learning_rate_tuned_analysis" / "capacity_multiplier.csv")
@@ -240,10 +267,9 @@ def main():
     fk = pd.read_csv(RES / "relbench_jbr_analysis" / "foreign_key_jbr_distribution.csv")
     phase_transition(sel)
     capacity_multiplier(sel, mult)
-    width_collapse(sel)
     relbench_distribution(fk)
     controls(ctrl)
-    interventions(RES / "relbench_interventions" / "intervention_runs.jsonl")
+    planted_by_children(RES / "relbench_planted_signal" / "analysis" / "planted_signal_by_children.csv")
     print("figures written to", OUT)
 
 
