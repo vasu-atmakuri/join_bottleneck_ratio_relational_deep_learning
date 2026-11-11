@@ -66,6 +66,33 @@ def out_of_sample(df):
     return m, scores
 
 
+def out_of_sample_gnn(df):
+    """Pre-registered test on one-layer message passing (sum aggregation, rare_pattern)."""
+    g = df[df.experiment == "out_of_sample_validation_gnn"]
+    if not len(g):
+        return pd.DataFrame()
+    sel = g.loc[g.groupby(["scenario", "seed"]).val_auroc.idxmax()]
+    obs = sel.groupby(["K", "D", "d"]).test_auroc.agg(observed="mean", seed_sd="std").reset_index()
+    m = obs.merge(pd.read_csv(D / "preregistered_predictions_gnn.csv"), on=["K", "D", "d"])
+    m.to_csv(D / "out_of_sample_gnn_by_configuration.csv", index=False)
+    rows = []
+    for p, name in (("pred_nominal_jbr", "nominal JBR"), ("pred_transferred_law", "law with DeepSets exponents"),
+                    ("pred_refitted_law", "law with refitted exponents")):
+        rows.append({"predictor": name, "n_configurations": len(m), "r2": r2(m.observed, m[p]),
+                     "spearman": float(spearmanr(m.observed, m[p])[0]),
+                     "mean_absolute_error": float((m.observed - m[p]).abs().mean())})
+    boots = []
+    for _ in range(2000):
+        b = m.iloc[RNG.integers(0, len(m), len(m))]
+        boots.append(r2(b.observed, b.pred_transferred_law) - r2(b.observed, b.pred_nominal_jbr))
+    rows.append({"predictor": "transferred minus nominal (R^2)", "n_configurations": len(m),
+                 "r2": r2(m.observed, m.pred_transferred_law) - r2(m.observed, m.pred_nominal_jbr),
+                 "r2_ci95": [float(np.quantile(boots, .025)), float(np.quantile(boots, .975))]})
+    out = pd.DataFrame(rows)
+    out.to_csv(D / "out_of_sample_gnn_scores.csv", index=False)
+    return out
+
+
 def depth(df):
     dp = df[df.experiment.isin(["two_layer_depth", "two_layer_depth_extended"])].copy()
     keys = ["experiment", "scenario", "target", "variant", "downward", "seed"]
@@ -144,9 +171,11 @@ def figures(m, both, ext):
 def main():
     df = load()
     m, scores = out_of_sample(df)
+    gnn = out_of_sample_gnn(df)
     both, fits, ext = depth(df)
     figures(m, both, ext)
-    summary = {"out_of_sample": scores.round(4).to_dict("records"), "depth": fits.round(4).to_dict("records"),
+    summary = {"out_of_sample": scores.round(4).to_dict("records"),
+               "out_of_sample_gnn": gnn.round(4).to_dict("records"), "depth": fits.round(4).to_dict("records"),
                "extended_two_layer_auroc_by_log2_jbr": ext.assign(x=np.log2(ext.jbr_empirical).round())
                .groupby("x").test_auroc.mean().round(3).to_dict()}
     with open(D / "law_validation_and_depth_summary.json", "w") as f:

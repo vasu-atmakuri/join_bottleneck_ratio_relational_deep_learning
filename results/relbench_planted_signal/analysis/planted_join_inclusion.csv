@@ -1,0 +1,7 @@
+join,test_seeds,train_positive_rate,test_positive_rate,best_auroc_k_at_most_4,included
+rel-avito/SearchInfo,5000,0.407,0.513,0.9969164964897842,True
+rel-avito/VisitStream,5000,0.501,0.498,0.6252997601918465,False
+rel-f1/results,256,0.24,0.75,,False
+rel-stack/badges,5000,0.432,0.504,0.9993126639358159,True
+rel-stack/comments,5000,0.465,0.489,0.5407935879861886,False
+rel-stack/posts,5000,0.472,0.496,0.5260937590495698,False

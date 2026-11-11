@@ -101,6 +101,37 @@ def planted():
     return table, byk
 
 
+def inclusion(byk):
+    """Applies the inclusion rule fixed in results/relbench_planted_signal/inclusion_rule.json to every planted join."""
+    import re
+    rule = json.load(open(PS / "inclusion_rule.json"))["criteria"]
+    rates, cur = {}, None
+    for line in (PS / "progress.log").open():
+        m = re.search(r"(rel-[a-z0-9]+): join (\w+)\.\w+ -> \w+", line)
+        if m:
+            cur = f"{m.group(1)}/{m.group(2)}"
+            continue
+        m = re.search(r"(train|test): (\d+) seeds.*positive rate parent_query ([0-9.]+)", line)
+        if m and cur and (cur, m.group(1)) not in rates:
+            rates[(cur, m.group(1))] = (int(m.group(2)), float(m.group(3)))
+    rows = []
+    for j in sorted(byk["join"].unique()):
+        small = byk[(byk["join"] == j) & (byk.label == "parent_query") & (byk.width == 128) & (byk.k_bin == "1-4")]
+        best_small = float(small.auroc.max()) if len(small) else float("nan")
+        test_n, test_rate = rates.get((j, "test"), (0, float("nan")))
+        _, train_rate = rates.get((j, "train"), (0, float("nan")))
+        r = {"join": j, "test_seeds": test_n, "train_positive_rate": train_rate, "test_positive_rate": test_rate,
+             "best_auroc_k_at_most_4": best_small}
+        r["included"] = bool(test_n >= rule["minimum_test_seeds"]
+                             and abs(train_rate - test_rate)
+                             <= rule["maximum_abs_difference_in_parent_query_positive_rate_between_train_and_test"]
+                             and best_small >= 0.90)
+        rows.append(r)
+    out = pd.DataFrame(rows)
+    out.to_csv(OUT / "planted_join_inclusion.csv", index=False)
+    return out
+
+
 def figures(byk):
     if not len(byk):
         return
@@ -110,8 +141,7 @@ def figures(byk):
     plt.rcParams.update({"font.size": 8, "font.family": "serif", "axes.spines.top": False,
                          "axes.spines.right": False, "pdf.fonttype": 42})
     (OUT / "figures").mkdir(parents=True, exist_ok=True)
-    # joins with fewer than 1000 test seeds (rel-f1) are too small for per-K curves and are reported in tables only
-    dss = sorted(byk[byk.test_seeds >= 1000]["join"].unique())
+    dss = sorted(inclusion(byk).query("included")["join"])
     fig, axes = plt.subplots(1, len(dss), figsize=(7.16, 1.9), sharey=True, squeeze=False)
     col = {"sum": "#1f77b4", "mean": "#ff7f0e", "attention_root": "#2ca02c", "sum_attention": "#9467bd"}
     for ax, ds in zip(axes[0], dss):

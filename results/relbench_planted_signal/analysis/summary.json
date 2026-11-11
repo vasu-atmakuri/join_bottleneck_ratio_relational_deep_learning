@@ -104,7 +104,7 @@
       "label": "fixed_query",
       "layers": 2,
       "attention_root": 1.0,
-      "mean": 0.999,
+      "mean": 1.0,
       "sum": 1.0,
       "sum_attention": 1.0
     },
@@ -113,16 +113,16 @@
       "label": "parent_query",
       "layers": 1,
       "attention_root": 0.965,
-      "mean": 0.963,
+      "mean": 0.962,
       "sum": 0.932,
-      "sum_attention": 0.956
+      "sum_attention": 0.959
     },
     {
       "join": "rel-avito/SearchInfo",
       "label": "parent_query",
       "layers": 2,
-      "attention_root": 0.976,
-      "mean": 0.972,
+      "attention_root": 0.975,
+      "mean": 0.969,
       "sum": 0.961,
       "sum_attention": 0.967
     },
@@ -220,19 +220,91 @@
       "join": "rel-stack/badges",
       "label": "parent_query",
       "layers": 1,
-      "attention_root": 0.958,
-      "mean": 0.929,
-      "sum": 0.921,
-      "sum_attention": 0.929
+      "attention_root": 0.962,
+      "mean": 0.933,
+      "sum": 0.924,
+      "sum_attention": 0.925
     },
     {
       "join": "rel-stack/badges",
       "label": "parent_query",
       "layers": 2,
       "attention_root": 0.996,
-      "mean": 0.977,
-      "sum": 0.991,
+      "mean": 0.978,
+      "sum": 0.99,
       "sum_attention": 0.992
+    },
+    {
+      "join": "rel-stack/comments",
+      "label": "fixed_query",
+      "layers": 1,
+      "attention_root": 0.994,
+      "mean": 0.963,
+      "sum": 1.0,
+      "sum_attention": 0.998
+    },
+    {
+      "join": "rel-stack/comments",
+      "label": "fixed_query",
+      "layers": 2,
+      "attention_root": 0.996,
+      "mean": 0.969,
+      "sum": 0.997,
+      "sum_attention": 0.996
+    },
+    {
+      "join": "rel-stack/comments",
+      "label": "parent_query",
+      "layers": 1,
+      "attention_root": 0.536,
+      "mean": 0.533,
+      "sum": 0.528,
+      "sum_attention": 0.534
+    },
+    {
+      "join": "rel-stack/comments",
+      "label": "parent_query",
+      "layers": 2,
+      "attention_root": 0.542,
+      "mean": 0.517,
+      "sum": 0.524,
+      "sum_attention": 0.519
+    },
+    {
+      "join": "rel-stack/posts",
+      "label": "fixed_query",
+      "layers": 1,
+      "attention_root": 0.999,
+      "mean": 0.987,
+      "sum": 1.0,
+      "sum_attention": 0.999
+    },
+    {
+      "join": "rel-stack/posts",
+      "label": "fixed_query",
+      "layers": 2,
+      "attention_root": 0.998,
+      "mean": 0.985,
+      "sum": 0.998,
+      "sum_attention": 0.997
+    },
+    {
+      "join": "rel-stack/posts",
+      "label": "parent_query",
+      "layers": 1,
+      "attention_root": 0.519,
+      "mean": 0.507,
+      "sum": 0.521,
+      "sum_attention": 0.521
+    },
+    {
+      "join": "rel-stack/posts",
+      "label": "parent_query",
+      "layers": 2,
+      "attention_root": 0.512,
+      "mean": 0.504,
+      "sum": 0.512,
+      "sum_attention": 0.511
     }
   ]
 }
