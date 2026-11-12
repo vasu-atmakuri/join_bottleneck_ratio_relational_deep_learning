@@ -66,7 +66,7 @@ def all_jobs():
     jobs = []
     for K, D, d in out_of_sample_configurations():
         lrs = [3e-4, 1e-3] + ([1e-4] if d >= 192 else [])
-        for t, s, lr in product(SET_TARGETS, [0, 1], lrs):
+        for t, s, lr in product(SET_TARGETS, [0, 1, 2], lrs):
             jobs.append(J("out_of_sample_validation", K, D, d, t, "deepsets", "sum", s, lr, {"hidden": max(128, d)}))
     for K, D, d in out_of_sample_configurations():
         lrs = [3e-4, 1e-3] + ([1e-4] if d >= 192 else [])
