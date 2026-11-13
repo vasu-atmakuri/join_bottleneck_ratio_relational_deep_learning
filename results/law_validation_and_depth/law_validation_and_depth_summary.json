@@ -4,78 +4,78 @@
       "target": "distributional",
       "predictor": "nominal JBR",
       "n_configurations": 36,
-      "r2": 0.4862,
-      "spearman": 0.782,
-      "mean_absolute_error": 0.1154,
+      "r2": 0.4814,
+      "spearman": 0.776,
+      "mean_absolute_error": 0.1149,
       "r2_ci95": NaN
     },
     {
       "target": "distributional",
       "predictor": "multiset JBR",
       "n_configurations": 36,
-      "r2": 0.3398,
-      "spearman": 0.7685,
-      "mean_absolute_error": 0.1366,
+      "r2": 0.3441,
+      "spearman": 0.7788,
+      "mean_absolute_error": 0.1352,
       "r2_ci95": NaN
     },
     {
       "target": "distributional",
       "predictor": "corrected law",
       "n_configurations": 36,
-      "r2": 0.8905,
-      "spearman": 0.915,
-      "mean_absolute_error": 0.048,
+      "r2": 0.8858,
+      "spearman": 0.9115,
+      "mean_absolute_error": 0.0482,
       "r2_ci95": NaN
     },
     {
       "target": "distributional",
       "predictor": "corrected minus nominal (R^2)",
       "n_configurations": 36,
-      "r2": 0.4043,
+      "r2": 0.4044,
       "spearman": NaN,
       "mean_absolute_error": NaN,
       "r2_ci95": [
-        0.32398550764127804,
-        0.513822276344144
+        0.3255335958106337,
+        0.5147557505213781
       ]
     },
     {
       "target": "rare_pattern",
       "predictor": "nominal JBR",
       "n_configurations": 36,
-      "r2": 0.4868,
-      "spearman": 0.8286,
-      "mean_absolute_error": 0.1148,
+      "r2": 0.477,
+      "spearman": 0.8246,
+      "mean_absolute_error": 0.116,
       "r2_ci95": NaN
     },
     {
       "target": "rare_pattern",
       "predictor": "multiset JBR",
       "n_configurations": 36,
-      "r2": 0.3785,
-      "spearman": 0.8239,
-      "mean_absolute_error": 0.1308,
+      "r2": 0.3773,
+      "spearman": 0.83,
+      "mean_absolute_error": 0.1317,
       "r2_ci95": NaN
     },
     {
       "target": "rare_pattern",
       "predictor": "corrected law",
       "n_configurations": 36,
-      "r2": 0.8563,
+      "r2": 0.8464,
       "spearman": 0.9355,
-      "mean_absolute_error": 0.0491,
+      "mean_absolute_error": 0.0507,
       "r2_ci95": NaN
     },
     {
       "target": "rare_pattern",
       "predictor": "corrected minus nominal (R^2)",
       "n_configurations": 36,
-      "r2": 0.3696,
+      "r2": 0.3694,
       "spearman": NaN,
       "mean_absolute_error": NaN,
       "r2_ci95": [
-        0.2775312002544557,
-        0.4886516726339413
+        0.2741413738398529,
+        0.4879841311408337
       ]
     }
   ],
