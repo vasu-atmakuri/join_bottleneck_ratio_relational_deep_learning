@@ -66,8 +66,7 @@ PLANTED_JOINS = [
     ("rel-stack", "user-engagement", "comments", "UserId", [0, 1, 2]),
 ]
 # Longer-training check on original tasks: three times the step budget, three seeds, d = 128.
-LONGER_TRAINING_TASKS = {"rel-f1": ["driver-dnf", "driver-top3"], "rel-stack": ["user-engagement", "user-badge"],
-                         "rel-avito": ["user-visits"], "rel-trial": ["study-outcome"]}
+LONGER_TRAINING_TASKS = REAL_TASKS  # all twelve tasks (the first six were run first)
 LONGER_TRAINING_EPOCHS = 12
 LEARNING_RATE_BY_WIDTH = {32: 5e-3, 128: 2e-3, 512: 1e-3}
 CONFIG = {"epochs": 4, "max_steps_per_epoch": 60, "batch_size": 256}
