@@ -1,0 +1,7 @@
+target,variant,heads,measure,spearman_with_auroc,n_cells
+rare_pattern,AttnAgg,1,task-relevant entropy K*H_rel/d,-0.8374886561109481,18
+rare_pattern,AttnAgg,1,total entropy K*H_total/d,-0.9172282127766048,18
+rare_pattern,AttnAgg,1,irrelevant column count,-0.32803992567592377,18
+rare_pattern,sum,1,task-relevant entropy K*H_rel/d,-0.8495965747170806,18
+rare_pattern,sum,1,total entropy K*H_total/d,-0.884179760815722,18
+rare_pattern,sum,1,irrelevant column count,-0.2229520180199796,18

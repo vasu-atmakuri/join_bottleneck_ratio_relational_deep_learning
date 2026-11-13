@@ -1,0 +1,23 @@
+target,predictor,r2,mae,n_runs
+rare_pattern,frozen corrected law (pre-registered),0.8463772763560796,0.050734786766878925,
+rare_pattern,frozen original JBR (pre-registered),0.4769851989700191,0.11599370662533907,
+rare_pattern,"linear regression on log K, log D, log d",0.6663844076653938,0.08927236560084885,
+rare_pattern,quadratic regression with interactions,0.8558287252306762,0.060763483137755245,
+rare_pattern,"gradient boosting on log K, log D, log d",0.7137398141921946,0.0735921990066534,
+rare_pattern,"5-nearest neighbours on log K, log D, log d",0.5967003147991906,0.09065579806396486,
+rare_pattern,isotonic in corrected predictor,0.8812611992595236,0.04235193173150449,
+rare_pattern,piecewise linear in corrected predictor,0.8461253355085027,0.048734306252758,
+rare_pattern,five-parameter logistic in corrected predictor,0.8430483470566057,0.05049315161702795,
+rare_pattern,"frozen corrected law, run level",0.8415530405720436,0.05091429387683094,108.0
+rare_pattern,"frozen original JBR, run level",0.4742664479713703,0.11603199390697141,108.0
+distributional,frozen corrected law (pre-registered),0.885794490590987,0.04821402141018758,
+distributional,frozen original JBR (pre-registered),0.48139668508454614,0.11487433701949534,
+distributional,"linear regression on log K, log D, log d",0.7176613897376053,0.08134181597862804,
+distributional,quadratic regression with interactions,0.8911453520453578,0.05445894945505598,
+distributional,"gradient boosting on log K, log D, log d",0.6111778511987275,0.08656215512443148,
+distributional,"5-nearest neighbours on log K, log D, log d",0.5722331032929198,0.09647016335047996,
+distributional,isotonic in corrected predictor,0.9221851649183511,0.03594654431688924,
+distributional,piecewise linear in corrected predictor,0.8813196147113609,0.04757209946430954,
+distributional,five-parameter logistic in corrected predictor,0.8803071051873795,0.047624090263020565,
+distributional,"frozen corrected law, run level",0.8753047849581467,0.050768042704472514,108.0
+distributional,"frozen original JBR, run level",0.47569591637035724,0.11606671790686479,108.0

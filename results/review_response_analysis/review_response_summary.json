@@ -1,0 +1,448 @@
+{
+  "run_totals": {
+    "synthetic_completed_original_suites": 6108,
+    "synthetic_configurations_KDd": 154,
+    "review_robustness_completed": 6,
+    "relbench_completed": 776,
+    "relbench_failed_and_rerun_or_excluded": 184
+  },
+  "exponents": [
+    {
+      "fit": "deepsets_sum_rare_pattern",
+      "n_configurations": 76,
+      "exponent_H": 0.9162131024411494,
+      "exponent_H_ci95": [
+        0.6333891754728042,
+        1.0755454171118524
+      ],
+      "exponent_d": 0.218218838635482,
+      "exponent_d_ci95": [
+        0.12629980957689133,
+        0.33329668227565956
+      ],
+      "midpoint": 6.686719823558911,
+      "midpoint_ci95": [
+        4.8459989263173595,
+        7.5747305919408765
+      ],
+      "share_exponent_d_below_0.5": 0.998
+    },
+    {
+      "fit": "deepsets_sum_distributional",
+      "n_configurations": 76,
+      "exponent_H": 0.8994302526932804,
+      "exponent_H_ci95": [
+        0.625555611123803,
+        1.0651905652524245
+      ],
+      "exponent_d": 0.20512249602042076,
+      "exponent_d_ci95": [
+        0.10266097558383883,
+        0.3012412313320763
+      ],
+      "midpoint": 6.684174870672994,
+      "midpoint_ci95": [
+        4.954189565769826,
+        7.6765201764725655
+      ],
+      "share_exponent_d_below_0.5": 1.0
+    },
+    {
+      "fit": "gnn_sum_rare_pattern",
+      "n_configurations": 63,
+      "exponent_H": 1.0560563106325511,
+      "exponent_H_ci95": [
+        0.7500134330478369,
+        1.3427587649952661
+      ],
+      "exponent_d": 0.2905448648666294,
+      "exponent_d_ci95": [
+        0.026187400566383752,
+        0.38404257753461574
+      ],
+      "midpoint": 6.688399003895396,
+      "midpoint_ci95": [
+        5.238417468010162,
+        8.693207563362948
+      ],
+      "share_exponent_d_below_0.5": 0.995
+    }
+  ],
+  "alternatives": [
+    {
+      "target": "rare_pattern",
+      "predictor": "frozen corrected law (pre-registered)",
+      "r2": 0.8463772763560796,
+      "mae": 0.050734786766878925,
+      "n_runs": NaN
+    },
+    {
+      "target": "rare_pattern",
+      "predictor": "frozen original JBR (pre-registered)",
+      "r2": 0.4769851989700191,
+      "mae": 0.11599370662533907,
+      "n_runs": NaN
+    },
+    {
+      "target": "rare_pattern",
+      "predictor": "linear regression on log K, log D, log d",
+      "r2": 0.6663844076653938,
+      "mae": 0.08927236560084885,
+      "n_runs": NaN
+    },
+    {
+      "target": "rare_pattern",
+      "predictor": "quadratic regression with interactions",
+      "r2": 0.8558287252306762,
+      "mae": 0.060763483137755245,
+      "n_runs": NaN
+    },
+    {
+      "target": "rare_pattern",
+      "predictor": "gradient boosting on log K, log D, log d",
+      "r2": 0.7137398141921946,
+      "mae": 0.0735921990066534,
+      "n_runs": NaN
+    },
+    {
+      "target": "rare_pattern",
+      "predictor": "5-nearest neighbours on log K, log D, log d",
+      "r2": 0.5967003147991906,
+      "mae": 0.09065579806396486,
+      "n_runs": NaN
+    },
+    {
+      "target": "rare_pattern",
+      "predictor": "isotonic in corrected predictor",
+      "r2": 0.8812611992595236,
+      "mae": 0.04235193173150449,
+      "n_runs": NaN
+    },
+    {
+      "target": "rare_pattern",
+      "predictor": "piecewise linear in corrected predictor",
+      "r2": 0.8461253355085027,
+      "mae": 0.048734306252758,
+      "n_runs": NaN
+    },
+    {
+      "target": "rare_pattern",
+      "predictor": "five-parameter logistic in corrected predictor",
+      "r2": 0.8430483470566057,
+      "mae": 0.05049315161702795,
+      "n_runs": NaN
+    },
+    {
+      "target": "rare_pattern",
+      "predictor": "frozen corrected law, run level",
+      "r2": 0.8415530405720436,
+      "mae": 0.05091429387683094,
+      "n_runs": 108.0
+    },
+    {
+      "target": "rare_pattern",
+      "predictor": "frozen original JBR, run level",
+      "r2": 0.4742664479713703,
+      "mae": 0.11603199390697141,
+      "n_runs": 108.0
+    },
+    {
+      "target": "distributional",
+      "predictor": "frozen corrected law (pre-registered)",
+      "r2": 0.885794490590987,
+      "mae": 0.04821402141018758,
+      "n_runs": NaN
+    },
+    {
+      "target": "distributional",
+      "predictor": "frozen original JBR (pre-registered)",
+      "r2": 0.48139668508454614,
+      "mae": 0.11487433701949534,
+      "n_runs": NaN
+    },
+    {
+      "target": "distributional",
+      "predictor": "linear regression on log K, log D, log d",
+      "r2": 0.7176613897376053,
+      "mae": 0.08134181597862804,
+      "n_runs": NaN
+    },
+    {
+      "target": "distributional",
+      "predictor": "quadratic regression with interactions",
+      "r2": 0.8911453520453578,
+      "mae": 0.05445894945505598,
+      "n_runs": NaN
+    },
+    {
+      "target": "distributional",
+      "predictor": "gradient boosting on log K, log D, log d",
+      "r2": 0.6111778511987275,
+      "mae": 0.08656215512443148,
+      "n_runs": NaN
+    },
+    {
+      "target": "distributional",
+      "predictor": "5-nearest neighbours on log K, log D, log d",
+      "r2": 0.5722331032929198,
+      "mae": 0.09647016335047996,
+      "n_runs": NaN
+    },
+    {
+      "target": "distributional",
+      "predictor": "isotonic in corrected predictor",
+      "r2": 0.9221851649183511,
+      "mae": 0.03594654431688924,
+      "n_runs": NaN
+    },
+    {
+      "target": "distributional",
+      "predictor": "piecewise linear in corrected predictor",
+      "r2": 0.8813196147113609,
+      "mae": 0.04757209946430954,
+      "n_runs": NaN
+    },
+    {
+      "target": "distributional",
+      "predictor": "five-parameter logistic in corrected predictor",
+      "r2": 0.8803071051873795,
+      "mae": 0.047624090263020565,
+      "n_runs": NaN
+    },
+    {
+      "target": "distributional",
+      "predictor": "frozen corrected law, run level",
+      "r2": 0.8753047849581467,
+      "mae": 0.050768042704472514,
+      "n_runs": 108.0
+    },
+    {
+      "target": "distributional",
+      "predictor": "frozen original JBR, run level",
+      "r2": 0.47569591637035724,
+      "mae": 0.11606671790686479,
+      "n_runs": 108.0
+    }
+  ],
+  "residuals": [
+    {
+      "target": "rare_pattern",
+      "variable": "log2 K",
+      "pearson_r_with_residual": -0.012744369450592059
+    },
+    {
+      "target": "rare_pattern",
+      "variable": "log2 D",
+      "pearson_r_with_residual": -0.3628839849623461
+    },
+    {
+      "target": "rare_pattern",
+      "variable": "log2 d",
+      "pearson_r_with_residual": -0.2673022695305123
+    },
+    {
+      "target": "distributional",
+      "variable": "log2 K",
+      "pearson_r_with_residual": -0.27443899464556437
+    },
+    {
+      "target": "distributional",
+      "variable": "log2 D",
+      "pearson_r_with_residual": -0.264878193426862
+    },
+    {
+      "target": "distributional",
+      "variable": "log2 d",
+      "pearson_r_with_residual": -0.21284063002270098
+    }
+  ],
+  "table1": [
+    {
+      "family": "DeepSets",
+      "model": "sum",
+      "target": "rare_pattern",
+      "n_configurations": 25,
+      "in_sample_r2": 0.8815350422421748,
+      "floor": 0.48338367620411093,
+      "ceiling": 0.9941744314336526,
+      "midpoint": 1.369930763190196,
+      "midpoint_ci95_over_configurations": [
+        0.5669766980988347,
+        2.1007156094042325
+      ],
+      "loo_r2_sigmoid": 0.7687510266765802,
+      "loo_r2_isotonic": 0.8032247153896109,
+      "loo_r2_piecewise": 0.7167631350453559
+    },
+    {
+      "family": "DeepSets",
+      "model": "sum",
+      "target": "distributional",
+      "n_configurations": 25,
+      "in_sample_r2": 0.8691847989757778,
+      "floor": 0.48723352706810047,
+      "ceiling": 0.9968394868587712,
+      "midpoint": 1.3617303604282531,
+      "midpoint_ci95_over_configurations": [
+        0.5563359986934348,
+        2.3872062758694996
+      ],
+      "loo_r2_sigmoid": 0.782466067804791,
+      "loo_r2_isotonic": 0.6589070649128488,
+      "loo_r2_piecewise": 0.7281260601069659
+    },
+    {
+      "family": "DeepSets",
+      "model": "mean",
+      "target": "rare_pattern",
+      "n_configurations": 25,
+      "in_sample_r2": 0.8999765939516869,
+      "floor": 0.5049871471170991,
+      "ceiling": 0.9999999999999999,
+      "midpoint": 0.8909218868756628,
+      "midpoint_ci95_over_configurations": [
+        0.2493656173219164,
+        1.4781766144396757
+      ],
+      "loo_r2_sigmoid": 0.8575529759280154,
+      "loo_r2_isotonic": 0.8289110920349163,
+      "loo_r2_piecewise": 0.8451160980650982
+    },
+    {
+      "family": "DeepSets",
+      "model": "mean",
+      "target": "distributional",
+      "n_configurations": 25,
+      "in_sample_r2": 0.9024696274430568,
+      "floor": 0.4991968724164134,
+      "ceiling": 0.9999999999999999,
+      "midpoint": 0.8296638026905669,
+      "midpoint_ci95_over_configurations": [
+        0.2451146873758867,
+        1.4513222649054385
+      ],
+      "loo_r2_sigmoid": 0.8626254979891748,
+      "loo_r2_isotonic": 0.7792939391607463,
+      "loo_r2_piecewise": 0.8426017476067325
+    },
+    {
+      "family": "GNN 1 layer",
+      "model": "sum",
+      "target": "rare_pattern",
+      "n_configurations": 11,
+      "in_sample_r2": 0.9297276342883823,
+      "floor": 0.5571833144951213,
+      "ceiling": 0.9999999999999999,
+      "midpoint": 0.6457137848496767,
+      "midpoint_ci95_over_configurations": [
+        0.050673252768778244,
+        2.2112786626537075
+      ],
+      "loo_r2_sigmoid": 0.6944704534304353,
+      "loo_r2_isotonic": 0.8307058507406998,
+      "loo_r2_piecewise": 0.7584879788778964
+    },
+    {
+      "family": "GNN 1 layer",
+      "model": "sum",
+      "target": "distributional",
+      "n_configurations": 11,
+      "in_sample_r2": 0.9375115388413607,
+      "floor": 0.5722731351737791,
+      "ceiling": 0.9999999999999999,
+      "midpoint": 0.6058219476202162,
+      "midpoint_ci95_over_configurations": [
+        0.11307314700402919,
+        2.1876837121057657
+      ],
+      "loo_r2_sigmoid": 0.7278428645439154,
+      "loo_r2_isotonic": 0.8435065039432683,
+      "loo_r2_piecewise": 0.7529605308161065
+    },
+    {
+      "family": "GNN 1 layer",
+      "model": "mean",
+      "target": "rare_pattern",
+      "n_configurations": 11,
+      "in_sample_r2": 0.9479127212614644,
+      "floor": 0.5646330354223623,
+      "ceiling": 0.9999999999999999,
+      "midpoint": 0.4719668472230518,
+      "midpoint_ci95_over_configurations": [
+        0.06030199960803985,
+        2.0951622141526527
+      ],
+      "loo_r2_sigmoid": 0.7673165632060698,
+      "loo_r2_isotonic": 0.8602580715693814,
+      "loo_r2_piecewise": 0.7977908843634887
+    },
+    {
+      "family": "GNN 1 layer",
+      "model": "mean",
+      "target": "distributional",
+      "n_configurations": 11,
+      "in_sample_r2": 0.9492568924326158,
+      "floor": 0.5660595150978308,
+      "ceiling": 0.9999999999999999,
+      "midpoint": 0.4973698864753239,
+      "midpoint_ci95_over_configurations": [
+        0.03222726165869177,
+        1.9668271612795956
+      ],
+      "loo_r2_sigmoid": 0.7837824703212333,
+      "loo_r2_isotonic": 0.8661903442950618,
+      "loo_r2_piecewise": 0.793915457883025
+    },
+    {
+      "family": "Extended",
+      "model": "sum",
+      "target": "rare_pattern",
+      "n_configurations": 63,
+      "in_sample_r2": 0.9301564984041315,
+      "floor": 0.5171810082042712,
+      "ceiling": 0.9999999999999999,
+      "midpoint": 1.499598528161589,
+      "midpoint_ci95_over_configurations": [
+        0.7633989876343084,
+        2.053809905844855
+      ],
+      "loo_r2_sigmoid": 0.9058705866608714,
+      "loo_r2_isotonic": 0.9078466343464361,
+      "loo_r2_piecewise": 0.9025186715270095
+    },
+    {
+      "family": "Extended",
+      "model": "attn 1h",
+      "target": "rare_pattern",
+      "n_configurations": 63,
+      "in_sample_r2": 0.7711636117662575,
+      "floor": 0.4914965752654431,
+      "ceiling": 0.9999999999999999,
+      "midpoint": 3.441247546576942,
+      "midpoint_ci95_over_configurations": [
+        1.1354331014261052,
+        5.557284268389538
+      ],
+      "loo_r2_sigmoid": 0.6874545647380066,
+      "loo_r2_isotonic": 0.7307719626660168,
+      "loo_r2_piecewise": 0.7061132493852873
+    },
+    {
+      "family": "Extended",
+      "model": "attn 4h",
+      "target": "rare_pattern",
+      "n_configurations": 63,
+      "in_sample_r2": 0.8100362202406217,
+      "floor": 0.5070111486013849,
+      "ceiling": 0.9999999999999999,
+      "midpoint": 3.0764900812450535,
+      "midpoint_ci95_over_configurations": [
+        1.351842462297225,
+        4.950888770777924
+      ],
+      "loo_r2_sigmoid": 0.6700268214329976,
+      "loo_r2_isotonic": 0.7519795173567709,
+      "loo_r2_piecewise": 0.7032447307157401
+    }
+  ]
+}

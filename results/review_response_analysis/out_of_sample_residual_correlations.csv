@@ -1,0 +1,7 @@
+target,variable,pearson_r_with_residual
+rare_pattern,log2 K,-0.012744369450592059
+rare_pattern,log2 D,-0.3628839849623461
+rare_pattern,log2 d,-0.2673022695305123
+distributional,log2 K,-0.27443899464556437
+distributional,log2 D,-0.264878193426862
+distributional,log2 d,-0.21284063002270098

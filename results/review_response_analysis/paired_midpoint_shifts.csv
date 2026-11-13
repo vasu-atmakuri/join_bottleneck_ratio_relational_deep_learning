@@ -1,0 +1,7 @@
+comparison,model,reference,n_configurations,midpoint_shift,multiplier,multiplier_ci95_over_configurations,share_shift_positive
+extended rare_pattern,AttnAgg-h1,SumAgg,63,1.9416490184153532,3.841444788153882,"[np.float64(0.7380508925620977), np.float64(13.410119583252472)]",0.92
+extended rare_pattern,AttnAgg-h4,SumAgg,63,1.5768915530834646,2.9832637939861306,"[np.float64(0.6863894991566538), np.float64(9.178231324478395)]",0.89
+architecture subset rare_pattern,"two-layer sum, message",one-layer sum,11,1.487702931417111,2.8044209771919815,"[np.float64(0.9291930366064294), np.float64(4.991928962412396)]",0.9533333333333334
+architecture subset rare_pattern,"two-layer sum, no message",one-layer sum,11,-0.266757151280549,0.8311857632392234,"[np.float64(0.3709738736049072), np.float64(1.01528985273178)]",0.05333333333333334
+architecture subset distributional,"two-layer sum, message",one-layer sum,11,1.6681185254734827,3.1779986800409628,"[np.float64(0.9517172876987543), np.float64(5.750596102097997)]",0.9666666666666667
+architecture subset distributional,"two-layer sum, no message",one-layer sum,11,-0.27746615962439203,0.8250387811939608,"[np.float64(0.40162112613452877), np.float64(1.0309280177758542)]",0.03

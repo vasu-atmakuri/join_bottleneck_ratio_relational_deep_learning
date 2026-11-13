@@ -1,0 +1,7 @@
+comparison,configurations_in_declining_range,mean_auroc_difference,ci95,mechanism_wins
+"attention 1 head vs sum, extended",13,0.1490318982449596,"[0.05726276676980898, 0.23218710298019524]",11
+"attention 4 heads vs sum, extended",12,0.13878595528265744,"[0.051064607923969274, 0.2197140394989061]",11
+"two-layer sum with message vs one-layer sum, rare_pattern",3,0.11252601116729084,"[0.07711287750889928, 0.13512438469103683]",3
+"two-layer sum without message vs one-layer sum, rare_pattern",3,-0.04065095732560039,"[-0.08324111866502182, 0.010701266767945472]",1
+"two-layer sum with message vs one-layer sum, distributional",3,0.1205014117141054,"[0.08655191699127285, 0.1651747623583374]",3
+"two-layer sum without message vs one-layer sum, distributional",3,-0.05004000856929199,"[-0.07161985562689444, -0.03646741572058387]",0
