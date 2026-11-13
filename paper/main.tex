@@ -24,7 +24,7 @@ athmakurivasu@gmail.com}}
 \maketitle
 
 \begin{abstract}
-Relational deep learning trains graph neural networks directly on multi-table databases, and every foreign-key join is resolved by a learned aggregation that compresses a variable-size set of child rows into a fixed-width parent embedding. We characterize when this compression fails, in 8{,}150 controlled training runs and 704 runs on RelBench databases. On set-dependent targets, accuracy of sum and mean aggregation falls along a sigmoid in the Join Bottleneck Ratio, $\jbr = K H_{\mathrm{row}}/d$ (child cardinality times row entropy over embedding width), with $R^2 = 0.87$ to $0.95$. The ratio is right in cardinality but wrong in width: a corrected law, $K H_{\mathrm{row}}^{0.9}/d^{0.2}$, fitted on 76 configurations and frozen before new runs, predicts accuracy on 36 unseen configurations with $R^2 = 0.85$ and $0.89$, against $0.48$ for the original ratio, and its exponents transfer to message-passing models ($R^2 = 0.76$ against $0.58$). Two mechanisms move the threshold where width does not: attention with the parent as query tolerates $3.8$ times larger joins, and a second message-passing layer gives sum aggregation a $2.8$ to $3.2$ times gain, but only when the parent first sends a message to its children. On real RelBench tables with planted labels, the same law appears: accuracy on labels that require one specific child row falls from $0.97$ to $0.64$ on average as the number of children grows from 4 to 64, attention with two layers retains $0.88$, and count-type labels stay at $1.00$ for every aggregator. On twelve original RelBench tasks, by contrast, replacing sum with a fairly implemented attention changes AUROC by $-0.4$ points (95\% CI $[-1.6, 0.6]$), widening from 32 to 512 changes it by $-0.1$ points, and three times longer training leaves both conclusions unchanged; the ratio also does not predict published task difficulty, although 44 of 95 foreign keys exceed it. The bottleneck is real and predictable, but current benchmark labels rarely depend on the information it removes.
+Relational deep learning resolves every foreign-key join with a learned aggregation that compresses a variable-size set of child rows into a fixed-width parent embedding. We characterize when this compression fails, in 8{,}150 controlled training runs and 704 runs on RelBench databases. On set-dependent targets, accuracy of sum and mean aggregation falls along a sigmoid in the Join Bottleneck Ratio $\jbr = K H_{\mathrm{row}}/d$ ($R^2 = 0.87$ to $0.95$). The ratio is right in cardinality but wrong in width: a corrected law, $K H_{\mathrm{row}}^{0.9}/d^{0.2}$, frozen before new runs, predicts 36 unseen configurations with $R^2 = 0.85$ and $0.89$ against $0.48$ for the original ratio, and its exponents transfer to message-passing models. Attention with the parent as query tolerates $3.8$ times larger joins, and a parent-to-child message before pooling gives sum aggregation a $2.8$ to $3.2$ times gain; width barely helps. On real RelBench tables with planted labels that require one specific child row, accuracy falls from $0.97$ to $0.64$ as children grow from 4 to 64, while count-type labels stay at $1.00$. On twelve original RelBench tasks, by contrast, fair attention changes AUROC by $-0.4$ points (95\% CI $[-1.6, 0.6]$), neither wider embeddings nor three times longer training change this picture, and the ratio does not predict published task difficulty although 44 of 95 foreign keys exceed it. The bottleneck is real and predictable, but current benchmark labels rarely depend on the information it removes.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -53,11 +53,7 @@ In every such model, a parent row receives messages from all of its child rows a
 
 \section{Related Work}
 
-\textbf{Relational deep learning.} Learning directly on relational databases was argued for in \cite{cvitkovic2020supervised} and formalized as RDL in \cite{fey2024relational}. RelBench \cite{robinson2024relbench} provides temporal splits, entity and recommendation tasks, and baselines comparing a GraphSAGE-based model \cite{hamilton2017graphsage} with LightGBM \cite{ke2017lightgbm} on engineered features. RelGNN \cite{chen2025relgnn} adds composite message passing through bridge tables, and RelGT \cite{dwivedi2025relgt} adds attention over sampled subgraphs.
-
-\textbf{Expressivity of aggregation.} Deep Sets \cite{zaheer2017deepsets} established sum decompositions as universal for set functions, and continuous sum decompositions require latent dimension at least equal to the set size \cite{wagstaff2019limitations,wagstaff2022universal}. Graph Isomorphism Networks \cite{xu2019gin} motivated sum over mean and max, and Principal Neighbourhood Aggregation \cite{corso2020pna} combined several aggregators. Attention \cite{velickovic2018gat,brody2022gatv2,lee2019settransformer} and Janossy pooling \cite{murphy2019janossy} can select instead of summarize. We measure what is learned at finite width and budget.
-
-\textbf{Bottlenecks and empirical laws.} Over-squashing \cite{alon2021bottleneck,topping2022oversquashing,digiovanni2023oversquashing} describes receptive fields compressed into fixed-width vectors, with width as one proposed remedy \cite{digiovanni2023oversquashing}. Empirical scaling laws \cite{hestness2017scaling,kaplan2020scaling} show that simple power laws can be measured and extrapolated when experiments are controlled; we follow that methodology for one relational operation and add a pre-registered out-of-sample test.
+Learning directly on relational databases was argued for in \cite{cvitkovic2020supervised} and formalized as RDL in \cite{fey2024relational}; RelBench \cite{robinson2024relbench} compares a GraphSAGE-based model \cite{hamilton2017graphsage} with LightGBM \cite{ke2017lightgbm}, and RelGNN \cite{chen2025relgnn} and RelGT \cite{dwivedi2025relgt} improve on it. Deep Sets \cite{zaheer2017deepsets} established sum decompositions as universal for set functions, with latent width at least the set size for continuous decompositions \cite{wagstaff2019limitations,wagstaff2022universal}; GIN \cite{xu2019gin} motivated sum over mean and max, PNA \cite{corso2020pna} combined aggregators, and attention \cite{velickovic2018gat,brody2022gatv2,lee2019settransformer} and Janossy pooling \cite{murphy2019janossy} select instead of summarize. Over-squashing \cite{alon2021bottleneck,topping2022oversquashing,digiovanni2023oversquashing} describes fixed-width compression of growing receptive fields. These results bound what is representable; following empirical scaling-law methodology \cite{hestness2017scaling,kaplan2020scaling}, we measure what is learned at finite width and budget and test it out of sample.
 
 \section{The Join Bottleneck Ratio}
 
@@ -80,7 +76,7 @@ Let each child value be encoded by an independent random vector $\phi(x) \in \{\
 \end{proposition}
 \noindent\emph{Sketch.} Cross terms $\langle \phi(x_i), \phi(q) \rangle$ for $x_i \neq q$ are independent, zero-mean, with variance $1/d$; the two classes are separated by a unit shift against noise of standard deviation $\sqrt{K/d}$. \qed
 
-Ideal codes thus need width proportional to $K$, with no dependence on $H_{\mathrm{row}}$ beyond the requirement that codes be distinct. A learned encoder must instead discover near-orthogonal codes for up to $2^{H_{\mathrm{row}}}$ values from data, which is where entropy enters, and our measurements show that gradient training converts extra width into capacity far less efficiently than random codes would ($a_d \approx 0.2$).
+Ideal codes need width proportional to $K$; a learned encoder must also discover near-orthogonal codes for up to $2^{H_{\mathrm{row}}}$ values from data, which is where entropy enters, and gradient training converts extra width into capacity far less efficiently than random codes ($a_d \approx 0.2$).
 
 \begin{proposition}[selection]
 If attention scores satisfy $\langle W_Q \mathbf{h}_p, W_K \mathbf{h}_i \rangle = \beta$ for the matching child and at most $\beta\varepsilon$ otherwise, the attention weight on the match is at least $(1 + (K-1)e^{-\beta(1-\varepsilon)})^{-1}$, which stays near one when $\beta(1-\varepsilon) \ge \log K$.
@@ -127,7 +123,7 @@ For each family, target and model we fit $\mathrm{AUROC} = a + (b-a)/(1 + e^{s(x
 
 For both set targets and both sum and mean, in both families, a sigmoid in $\log_2\jbr$ explains $87\%$ to $95\%$ of the variance (mean $R^2 = 0.916$, 95\% CI $[0.896, 0.933]$, nine fits; Fig.~\ref{fig:phase}, Table~\ref{tab:fits}). Below $\jbr = 0.5$ mean AUROC is at least $0.989$ in every fit; above $\jbr = 2$ it is $0.53$ to $0.58$, and above $\jbr = 4$ it is $0.50$ to $0.52$, which is chance. Midpoints lie at $\jbr \approx 1.8$ to $2.6$ for DeepSets and $1.4$ to $1.6$ for one message-passing layer. The mean-based control stays between $0.99$ and $1.00$ for sum and mean at every ratio, and max pooling does not follow the law ($R^2 = 0.28$ and $0.32$). At equal ratio, the five decompositions at $\jbr = 1$ give AUROC coefficients of variation of $0.08$ to $0.10$ for sum and $0.12$ to $0.13$ for mean.
 
-The threshold depends on optimization: at a fixed learning rate of $10^{-3}$ the same fits put the midpoints near $\jbr = 1$, and per-configuration selection moves them up by a factor of $1.8$ to $2.6$, mostly by choosing smaller rates for wide encoders ($10^{-4}$ in $81\%$ of cases at $d = 512$). A larger step budget helps far less (for example $0.846$ to $0.934$ at $K = 8, D = 8$ from half to four times the budget, and nothing for $K \ge 32$).
+The threshold depends on optimization: at a fixed learning rate of $10^{-3}$ the midpoints sit near $\jbr = 1$, and per-configuration selection moves them up by a factor of $1.8$ to $2.6$, mostly by choosing smaller rates for wide encoders. A four times larger step budget helps far less (for example $0.846$ to $0.934$ at $K = 8, D = 8$, and nothing for $K \ge 32$).
 
 \begin{table}[t]
 \caption{Sigmoid fits of test AUROC on $\log_2\jbr$ (set targets, learning rate selected per configuration).}
@@ -160,7 +156,7 @@ Extended & rare pattern & attn (4h) & 0.810 & 3.08 & 8.43\\
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{out_of_sample_validation.pdf}
+\includegraphics[width=0.9\columnwidth]{out_of_sample_validation.pdf}
 \caption{Pre-registered out-of-sample test on 36 configurations not used for fitting. Left: the original ratio. Right: the corrected law \eqref{eq:law}. Each point is one configuration and target; the dashed line is perfect prediction.}
 \label{fig:oos}
 \end{figure}
@@ -194,20 +190,15 @@ Law, DeepSets exponents & \textbf{0.761} & \textbf{0.066} & & \\
 
 \subsection{Q3: what moves the threshold}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{capacity_multiplier.pdf}
-\caption{Extended range ($\jbr$ up to 4096). Attention with the parent as query shifts the transition of sum aggregation by a factor of 3.84 (one head) and 2.98 (four heads).}
-\label{fig:mult}
-\end{figure}
 
-\textbf{Selection.} On the extended range (Fig.~\ref{fig:mult}), single-head attention moves the midpoint from $\log_2\jbr = 1.50$ to $3.44$, a capacity multiplier of $3.84$ (95\% CI $[3.29, 4.40]$); four heads give $2.98$ ($[2.53, 3.40]$), since splitting $d$ across heads reduces the per-head width. Attention curves fit less well ($R^2 = 0.77$ and $0.81$) because at very small $d$ the query and child codes no longer fit in the head dimension, as Proposition 2 anticipates.
+
+\textbf{Selection.} On the extended range, single-head attention moves the midpoint from $\log_2\jbr = 1.50$ to $3.44$, a capacity multiplier of $3.84$ (95\% CI $[3.29, 4.40]$); four heads give $2.98$ ($[2.53, 3.40]$), since splitting $d$ across heads reduces the per-head width. Attention curves fit less well ($R^2 = 0.77$ and $0.81$) because at very small $d$ the query and child codes no longer fit in the head dimension, as Proposition 2 anticipates.
 
 \textbf{A message before pooling.} With a second layer in which children first receive the parent's embedding, sum aggregation moves its midpoint from $0.65$ to $2.13$ (rare pattern; 95\% CI of the two-layer midpoint $[2.07, 2.21]$) and from $0.61$ to $2.27$ (distributional), a multiplier of $2.8$ to $3.2$, close to that of attention (Fig.~\ref{fig:depth}). The same depth without the parent-to-child message gives no gain (midpoints $0.38$ and $0.33$), and mean aggregation gains nothing from the message ($0.57$ and $0.55$). This is the pattern of Proposition 3: the message lets each child test itself against the query, and only summation turns the resulting indicators into a count that does not shrink with $K$. Above $\jbr = 8$ all models are at chance.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{depth.pdf}
+\includegraphics[width=0.82\columnwidth]{depth.pdf}
 \caption{Two message-passing layers, rare pattern target. With the parent-to-child message, sum aggregation tolerates about three times larger ratios; without it, depth alone does not help.}
 \label{fig:depth}
 \end{figure}
@@ -216,14 +207,7 @@ Law, DeepSets exponents & \textbf{0.761} & \textbf{0.066} & & \\
 
 \subsection{Robustness}
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{controls.pdf}
-\caption{Controls (DeepSets sum unless stated, $d = 128$, three seeds). (a) Irrelevant child columns consume capacity. (b) Missing values degrade accuracy steadily. (c) A four times larger budget gives modest gains below the transition and none above it. (d) Doubling $K$ at test time hurts sum aggregation; attention is unaffected until $K = 64$.}
-\label{fig:controls}
-\end{figure*}
-
-Fig.~\ref{fig:controls} summarizes the controls. Adding 24 irrelevant columns lowers sum aggregation at $K = 16, D = 8$ from $0.647$ to $0.500$ and attention from $0.999$ to $0.951$, so the entropy that matters is what the encoder cannot cheaply discard. Missing rates of $0.1$ and $0.3$ lower AUROC from $0.973$ to $0.933$ and $0.824$ at $K = 4, D = 16$. Doubling $K$ at test time lowers sum aggregation from $0.834$ to $0.691$ at $K = 8, D = 16$, while attention stays at or above $0.994$ up to $K = 32$.
+The law holds under realistic perturbations, with the expected direction in each case: 24 irrelevant child columns lower sum aggregation at $K = 16, D = 8$ from $0.647$ to $0.500$ (attention: $0.999$ to $0.951$), so entropy the encoder cannot cheaply discard still consumes capacity; missing rates of $0.1$ and $0.3$ lower AUROC from $0.973$ to $0.933$ and $0.824$ at $K = 4, D = 16$; and doubling $K$ at test time lowers sum aggregation from $0.834$ to $0.691$ at $K = 8, D = 16$, while attention stays at or above $0.994$ up to $K = 32$.
 
 \section{Results on RelBench}
 
@@ -238,7 +222,7 @@ Fig.~\ref{fig:controls} summarizes the controls. Adding 24 irrelevant columns lo
 
 To test the mechanism on real data with a known ground truth, we keep real RelBench tables, cardinalities and child features and plant only the label. For a join from a child table to an entity table, one child column is chosen by a fixed rule (the discrete column with most distinct values, hashed into at most 1{,}000 buckets), and each entity receives a categorical column holding a query value. The \emph{query label} is 1 if some child visible at the seed time carries the entity's query value. The \emph{count label} is 1 if some visible child carries one of a fixed set of common values, the same for every entity. Both labels share the same graph and inputs. Seeds and timestamps come from a RelBench task on the entity table, restricted to entities with 1 to 64 visible children so that the sampler (fanout 64) always sees all of them. We train the standard RelBench RDL pipeline (Section~\ref{sec:real}) with one or two layers and four aggregations.
 
-Before the final runs we fixed an inclusion rule and committed it to the repository: a join enters the figures and the main table if it has at least 1{,}000 test seeds, a positive rate that differs by at most $0.15$ between training and test, and a query label that some model learns at small cardinality (AUROC at least $0.90$ for entities with $K \le 4$). Of six joins run, two pass: users and badges in rel-stack, and users and searches in rel-avito (5{,}000 test seeds each, three seeds, seed-to-seed standard deviation at most $0.010$ at $d = 128$). rel-f1 fails on size and shift (256 test seeds; positive rate $0.75$ against $0.24$ in training). Three joins whose planted column is close to unique per row (post bodies and comment texts in rel-stack, IP addresses in rel-avito visits, hashed into 1{,}000 near-uniform values) are not learned by any model even at $K \le 4$ (best AUROC $0.53$ to $0.63$): matching a parent value to a child value requires learning the identity of each of the 1{,}000 values in two separate embedding tables, which the training budget does not allow at any cardinality. These joins carry no information about the effect of $K$, and their exclusion is consistent with the large entropy exponent of the law. All six are reported in the repository.
+Before the final runs we fixed and committed an inclusion rule: a join enters the figures and the main table if it has at least 1{,}000 test seeds, a train-test difference in positive rate of at most $0.15$, and a query label that some model learns at small cardinality (AUROC at least $0.90$ for $K \le 4$). Of six joins run, two pass: users and badges in rel-stack and users and searches in rel-avito (5{,}000 test seeds each, three seeds, seed standard deviation at most $0.010$). rel-f1 fails on size and shift (256 test seeds; positive rate $0.75$ against $0.24$ in training), and three joins whose planted column is nearly unique per row (post bodies, comment texts, IP addresses) are not learned by any model even at $K \le 4$ (best AUROC $0.53$ to $0.63$), because matching 1{,}000 near-uniform values across two embedding tables exceeds the training budget at any cardinality, consistent with the large entropy exponent. All six are reported in the repository.
 
 The controlled results reappear on the included joins (Table~\ref{tab:planted}, Fig.~\ref{fig:planted}). Count labels reach $1.000$ for every aggregator. On query labels in rel-stack with one layer, all aggregators decline with cardinality, from $0.95$ to $0.99$ at $K \le 4$ to $0.58$ to $0.71$ at $K = 33$ to $64$. With two layers, attention keeps $0.88$ at $K = 33$ to $64$, against $0.76$ for sum and $0.70$ for mean. On rel-avito, where most entities have few searches, all models stay at or above $0.93$ overall, and attention or mean still lead sum by about three points with one layer.
 
@@ -265,64 +249,41 @@ Join & Label & L & sum & mean & attn & sum+attn\\
 \subsection{Q5: aggregation on the original tasks}
 \label{sec:real}
 
-On twelve entity tasks in four databases (rel-f1, rel-trial, rel-stack, rel-avito; Table~\ref{tab:real}) we train the RelBench RDL pipeline (per-table ResNet tabular encoders, relative-time encoding, two layers of heterogeneous message passing on temporally sampled subgraphs with fanout $[64, 32]$, MLP head; four epochs of at most 60 batches of 256; best validation checkpoint; official evaluator; text columns omitted) and change only the aggregation and the width, with two seeds.
+On twelve entity tasks in four databases (rel-f1, rel-trial, rel-stack, rel-avito; per-task results are in the repository) we train the RelBench RDL pipeline (per-table ResNet tabular encoders, relative-time encoding, two layers of heterogeneous message passing on temporally sampled subgraphs with fanout $[64, 32]$, MLP head; four epochs of at most 60 batches of 256; best validation checkpoint; official evaluator; text columns omitted) and change only the aggregation and the width, with two seeds.
 
 The stock heterogeneous attention layer of the RelBench package applies GATv2 \cite{brody2022gatv2} without self-loops and without a root term, so a node's own features are replaced by its neighbors' after the first layer, whereas GraphSAGE keeps a root weight. With that layer, attention is $2.5$ AUROC points below sum (95\% CI $[-3.4, -1.7]$) and loses on all seven classification tasks. Adding a root weight, so that only the neighbor aggregation differs, shrinks the difference to $-0.4$ points ($[-1.6, 0.6]$), and the combination of sum and attention matches sum ($+0.01$, $[-0.15, 0.20]$). On the five regression tasks the average differences are at most $0.011$ normalized MAE. Longer training does not change this. Rerunning all twelve tasks with three times the step budget and three seeds, the average AUROC differences against sum are $-0.7$ points for attention (range $-2.4$ to $+2.3$), $-0.2$ for sum with attention and $-1.2$ for mean, regression differences stay within $0.05$ normalized MAE, and no aggregator beats sum on every task. Width barely matters either: from $d = 32$ to $512$ the AUROC of sum and mean changes by $-0.1$ points on average (range $-5.9$ to $+2.8$, with the largest drop on driver-top3, the smallest dataset), and normalized MAE by $-0.001$.
 
-\begin{table}[t]
-\caption{Original RelBench tasks, $d = 128$: test AUROC ($\uparrow$) or normalized MAE ($\downarrow$, marked $^*$), mean of two seeds. GATv2: stock layer without root term; attn: GATv2 with a root weight.}
-\label{tab:real}
-\centering
-\setlength{\tabcolsep}{2.6pt}
-\begin{tabular}{lccccc}
-\toprule
-Task & sum & mean & GATv2 & attn & sum+attn\\
-\midrule
-avito ad-ctr$^*$ & 0.441 & 0.454 & 0.455 & 0.450 & 0.441\\
-avito user-clicks & 0.656 & 0.636 & 0.618 & 0.632 & 0.658\\
-avito user-visits & 0.656 & 0.620 & 0.615 & 0.622 & 0.657\\
-f1 driver-dnf & 0.712 & 0.723 & 0.726 & 0.721 & 0.722\\
-f1 driver-position$^*$ & 0.587 & 0.594 & 0.615 & 0.598 & 0.584\\
-f1 driver-top3 & 0.761 & 0.759 & 0.698 & 0.775 & 0.776\\
-stack post-votes$^*$ & 0.132 & 0.133 & 0.133 & 0.133 & 0.133\\
-stack user-badge & 0.853 & 0.838 & 0.829 & 0.851 & 0.852\\
-stack user-engagement & 0.884 & 0.859 & 0.883 & 0.887 & 0.890\\
-trial site-success$^*$ & 0.935 & 0.923 & 0.924 & 0.931 & 0.906\\
-trial study-adverse$^*$ & 0.156 & 0.160 & 0.165 & 0.164 & 0.155\\
-trial study-outcome & 0.648 & 0.655 & 0.624 & 0.650 & 0.648\\
-\bottomrule
-\end{tabular}
-\end{table}
+
 
 \subsection{How common are super-critical joins, and do they predict difficulty?}
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\columnwidth]{relbench_jbr_distribution.pdf}
+\includegraphics[width=0.85\columnwidth]{relbench_jbr_distribution.pdf}
 \caption{$\log_2\jbr$ of all 95 foreign keys of ten RelBench databases at $d = 128$, without (circles) and with (squares) lookup entropy. Gray band: measured sum and mean midpoints; dotted line: attention midpoint.}
 \label{fig:real}
 \end{figure}
 
-For all 95 foreign keys of ten RelBench databases we computed $K$ (mean number of children of parents with at least one), $H_{\mathrm{row}}$ (sum of plug-in column entropies after discretizing numeric columns into 32 quantile bins and hashing high-cardinality and text columns into 32 buckets, minus each column's shuffle-corrected mutual information with the parent) and $H_{\mathrm{lookup}}$. At $d = 128$ the median ratio is $0.58$ (interquartile range $0.04$ to $5.4$; Fig.~\ref{fig:real}): $44$ foreign keys ($46\%$) exceed $\jbr = 1$, $64$ ($67\%$) when lookup entropy is included, and $34$ at $d = 256$.
+For all 95 foreign keys of ten RelBench databases we computed $K$, $H_{\mathrm{row}}$ (plug-in column entropies after binning numeric and hashing high-cardinality columns into 32 buckets, minus each column's shuffle-corrected mutual information with the parent) and $H_{\mathrm{lookup}}$. At $d = 128$ the median ratio is $0.58$ (interquartile range $0.04$ to $5.4$; Fig.~\ref{fig:real}): $44$ foreign keys ($46\%$) exceed $\jbr = 1$, $64$ ($67\%$) with lookup entropy, and $34$ at $d = 256$.
 
 For the 30 tasks with published results, we tested whether the ratio predicts RDL difficulty (the within-task-type percentile of the RDL error) or the relative gains of RDL over LightGBM \cite{robinson2024relbench} and of RelGNN \cite{chen2025relgnn} and RelGT \cite{dwivedi2025relgt} over RDL, all computed against the RDL results of \cite{robinson2024relbench} (the RelGT paper reports a re-run RDL baseline that differs only on the two rel-stack classification tasks). The pre-specified primary test, entropy-weighted $\jbr_{\mathrm{eff}}$ against RDL difficulty, is null ($\rho = 0.015$, within-database permutation $p = 0.90$, LODO $R^2 = -0.23$). Across all 48 predictor-outcome pairs, ratio-based correlations lie between $-0.25$ and $0.20$ and no test survives Holm correction. Five task-conditional variants, which weight each join by the cross-validated skill of its aggregated features for the label, are also null on 21 entity tasks (all Holm-adjusted $p = 1.0$, all LODO $R^2 < 0$).
 
 \section{Discussion}
 
-\textbf{Reconciling the results.} The controlled experiments and the planted labels show that the bottleneck is real, sharp and predictable. The original tasks show that it rarely binds on current benchmarks. The planted experiment explains why: the same real tables that defeat pooling on query labels are handled perfectly by every aggregator on count labels, and pooling preserves exactly the moments and counts that the original labels appear to depend on. Neighbor sampling also caps $K$ at the fanout, and the standard second layer already supplies the parent-to-child message of Proposition 3. Super-critical joins are therefore common but mostly harmless for today's labels. They become harmful when a prediction depends on whether a specific related record exists, which is common in practice (has this customer bought this product before; has this account logged in from this device), but rare in the benchmark tasks.
+\textbf{Reconciling the results.} The controlled experiments and planted labels show a real, sharp and predictable bottleneck; the original tasks show that it rarely binds. The same real tables that defeat pooling on query labels are handled perfectly on count labels, and pooling preserves the moments and counts the original labels appear to depend on. Neighbor sampling also caps $K$, and the standard second layer already supplies the parent-to-child message of Proposition 3. The bottleneck matters when a prediction depends on whether a specific related record exists (has this customer bought this product; has this account used this device), which is common in practice but rare in the benchmark.
 
-\textbf{Design guidance.} For a join whose corrected ratio is well past the transition and whose label may depend on specific child records: send a message from parent to children before pooling and use sum, or use attention with a root term; do not rely on width. For count-like labels, plain sum aggregation is sufficient at any ratio we measured. When using attention in heterogeneous RDL models, keep a root or residual term.
+\textbf{Design guidance.} For a join well past the transition whose label may depend on specific child records, send a parent-to-child message before sum pooling or use attention with a root term; do not rely on width. For count-like labels, sum aggregation suffices at every ratio we measured.
 
-\textbf{Limitations.} The synthetic targets are binary exact-match tasks, and the corrected exponents come from one model family. Planted labels use one column per join, and two of six joins pass the pre-declared inclusion rule; the rule was fixed before the last four joins and the third seed were run, but after the first two joins had been inspected. RelBench runs train on CPUs with budgets below those of published baselines, although a three times longer budget did not change the conclusions. Plug-in entropies on real data are biased for high-cardinality columns.
+\textbf{Limitations.} The synthetic targets are binary exact-match tasks and the corrected exponents come mainly from DeepSets; two of six planted joins pass the inclusion rule, which was fixed after the first two joins had been inspected; RelBench runs use CPU budgets below published ones; and plug-in entropies are biased for high-cardinality columns.
 
 \section{Conclusion}
 
-Learned pooling at a foreign-key join fails along a sharp, predictable curve. A corrected capacity law, $K H_{\mathrm{row}}^{0.9}/d^{0.2}$, predicts accuracy on unseen joins with $R^2$ near $0.9$; attention and a parent-to-child message move the threshold by about three to four times, and width barely does. The same behavior appears on real RelBench tables when the label depends on a specific child record, but not on the current benchmark tasks, whose labels pooling already preserves. We release all code, the pre-registered predictions and every run record.
+Learned pooling at a foreign-key join fails along a sharp, predictable curve. A corrected law, $K H_{\mathrm{row}}^{0.9}/d^{0.2}$, predicts unseen joins with $R^2$ near $0.9$; attention and a parent-to-child message move the threshold three to four times, and width barely does. The effect appears on real tables when labels depend on specific child records, but not on current benchmark tasks.
 
 \section*{Code and Data Availability}
 Code, configurations, pre-registered predictions, run records and analysis outputs are available at \url{https://github.com/vasu-atmakuri/join_bottleneck_ratio_relational_deep_learning}. Every number in this paper is produced by the analysis scripts in that repository.
 
-\setlength{\IEEEbibitemsep}{0pt}\footnotesize
+
 \bibliographystyle{IEEEtran}
 \bibliography{references}
 
