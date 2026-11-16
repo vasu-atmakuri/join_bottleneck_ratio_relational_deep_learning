@@ -1,63 +1,80 @@
-# Join Bottleneck Ratio: Phase Transitions in Relational Aggregation
+# When Does Learned Pooling Fail at Relational Joins?
 
-Code and results for the Join Bottleneck Ratio (JBR) study of information loss when relational deep learning
-models aggregate child rows across a foreign-key join into a fixed-size parent embedding.
+Code, run records and analysis for the paper *When Does Learned Pooling Fail at Relational Joins? Empirical
+Scaling, Architectural Mechanisms, and Benchmark Limits* (V. Atmakuri, AISCN 2027 submission). The manuscript is
+in `paper/` (`join_bottleneck_ratio_manuscript.pdf`, LaTeX source `main.tex`).
 
-    JBR = K * H_row / d
+The study asks when a learned aggregation that compresses the K child rows of a foreign-key join into a
+d-dimensional parent embedding stops working, and uses the Join Bottleneck Ratio as an empirical difficulty index:
 
-K is the number of child rows per parent, H_row the entropy of a child row in bits (sum of per-feature
-conditional entropies) and d the embedding dimension of the aggregated parent representation. A
-multiset-corrected variant, JBR_set = log2 C(2^H_row + K - 1, K) / d, removes the information in row order,
-which a permutation-invariant aggregator cannot use.
+    JBR = K * H_row / d,        log2 X = log2 K + a_H log2 H_row - a_d log2 d
+
+K is the number of child rows per parent, H_row the summed plug-in entropy of the child columns in bits and d the
+embedding width. X is the empirically corrected index (a_H = 0.92, a_d = 0.22 on DeepSets sum).
+
+## Runs at a glance
+
+| Suite | Runner | Records | Completed runs |
+|---|---|---|---|
+| First synthetic suite (fixed learning rate) | `experiments/run_synthetic_experiments.py` | `results/synthetic_runs/` | 2,202 |
+| Learning-rate-tuned core, GNN, extended range, width sweep | `experiments/run_learning_rate_tuned_core_experiments.py` | `results/learning_rate_tuned_core/` | 3,636 |
+| Controls (irrelevant columns, missing values, cardinality shift, budget, width) | `experiments/run_capacity_law_control_experiments.py` | `results/capacity_law_controls/` | 1,212 |
+| Pre-registered out-of-sample test, two-layer depth | `experiments/run_law_validation_and_depth_experiments.py` | `results/law_validation_and_depth/` | 1,260 |
+| New task families, data distributions, query conditioning, attention margins, width budget | `experiments/run_review_robustness_experiments.py` | `results/review_robustness/` | 226 |
+| **Controlled total** | | | **8,536** |
+| RelBench aggregation and width interventions | `real_data/train_relbench_aggregation_interventions.py` | `results/relbench_interventions/` | 216 |
+| RelBench planted labels, attention variants, longer training | `real_data/train_relbench_planted_signal_and_aggregation_variants.py` | `results/relbench_planted_signal/` | 560 |
+| **RelBench total** | | | **776** |
+
+`results/review_response_analysis/run_manifest.csv` lists every executed run (suite, experiment, configuration,
+target, model, seed, learning rate, status, test metric); `run_manifest_counts.csv` gives the totals above.
+Failed RelBench attempts (144 runs with a renamed metric, all rerun; 40 runs on a dropped join) are listed with
+status `error`.
+
+## Pre-registration
+
+| Commit | Content |
+|---|---|
+| `92340b8` | Frozen DeepSets fits and predictions for the 36 out-of-sample configurations (`analysis/preregister_capacity_law_predictions.py`, `results/law_validation_and_depth/preregistered_*`) |
+| `85c842e`, `9422a07` | The out-of-sample runs (two seeds, then a third) |
+| `f60ed90` | Message-passing predictions and the planted-join inclusion rule (`results/relbench_planted_signal/inclusion_rule.json`) |
+| `9d4ad13` | The message-passing out-of-sample runs |
+
+The prediction files have not changed since `92340b8` (`git log -- results/law_validation_and_depth/preregistered_predictions.csv`).
+`analysis/analyze_law_validation_and_depth.py` scores them without refitting.
 
 ## Layout
 
 | Path | Contents |
 |---|---|
-| `relational_aggregation_bottleneck/scenarios.py` | scenario grids: 25 base (JBR 1/32 to 16, d = 128), 5 iso-JBR, 11 architecture, 38 extreme (JBR 32 to 4096 via smaller d), 5 head-sweep |
-| `relational_aggregation_bottleneck/data_generation.py` | parent-child data generator, three targets (mean_based, rare_pattern, distributional), empirical JBR |
-| `relational_aggregation_bottleneck/models.py` | DeepSets (sum, mean, max), GNN SumAgg / MeanAgg / AttnAgg (multi-head, parent query), denormalized MLP |
-| `relational_aggregation_bottleneck/training.py` | online training (fresh sample per step), early stopping on validation AUROC |
-| `experiments/run_synthetic_experiments.py` | resumable runner for all 2,202 synthetic training runs |
-| `analysis/analyze_synthetic_phase_transition.py` | sigmoid fits, predictor comparison, regimes, iso-JBR, architecture, capacity multiplier, figures |
-| `results/synthetic_runs/` | one JSON line per training run |
-| `results/synthetic_analysis/` | tables, summary JSON and figures |
+| `relational_aggregation_bottleneck/` | data generator and variants, scenario grids, models (DeepSets, one- and two-layer message passing, attention), training loop |
+| `experiments/` | resumable runners for the controlled suites |
+| `real_data/` | RelBench join statistics, temporal subgraph sampler, aggregation interventions, planted-label experiments, published baseline results |
+| `analysis/` | fits, pre-registration, scoring, uncertainty analyses, RelBench analyses, figures (`make_publication_figures.py`) |
+| `results/` | one JSON line per run, plus every analysis output used in the paper |
+| `paper/` | manuscript source, figures and PDF |
 
-## Synthetic data
+Paper elements and the scripts that produce them:
 
-Each parent has a query pattern q in {0,1}^D and K child rows of D uniform binary features.
-
-* **mean_based**: 1 if w . (mean child row - 1/2) > 0 for a fixed random w. Needs only first moments.
-* **rare_pattern**: 1 if exactly one child equals q, 0 if none does.
-* **distributional**: 1 if q appears exactly twice among the children, 0 if exactly once.
-
-Non-planted rows never equal q, so the classes of the two set targets differ only in the planted rows.
-Training batches are generated fresh at every step, so results measure the aggregation channel rather than
-the size of a fixed training set. Validation (1,000 parents) and test (2,000 parents) sets are fixed.
-
-## Experiments
-
-| Experiment | Runs |
-|---|---|
-| main_deepsets: 25 scenarios x 3 targets x {sum, mean, max} x 3 seeds | 675 |
-| gnn_architecture: 11 scenarios x 3 targets x {SumAgg, MeanAgg, AttnAgg} x 3 seeds | 297 |
-| attention_head_sweep: 5 scenarios x {1, 4, 8, 16} heads x 3 seeds | 60 |
-| extended_attention: 63 scenarios x {1, 4, 8, 16} heads x 3 seeds | 756 |
-| extended_sum: 63 scenarios x SumAgg x 3 seeds | 189 |
-| denormalized: 25 scenarios x 3 targets x 3 seeds | 225 |
-| **total** | **2,202** |
+| Paper | Script | Output |
+|---|---|---|
+| Fig. 1, Table I | `analysis/analyze_learning_rate_tuned_results.py`, `analysis/analyze_review_response.py` | `results/learning_rate_tuned_analysis/`, `results/review_response_analysis/table1_*` |
+| Table II, exponent intervals, baselines | `analysis/analyze_law_validation_and_depth.py`, `analysis/analyze_review_response.py` | `results/law_validation_and_depth/`, `results/review_response_analysis/` |
+| Fig. 2, multipliers | `analysis/analyze_law_validation_and_depth.py`, `analysis/analyze_paired_midpoint_shifts.py`, `analysis/analyze_paired_configuration_differences.py` | same folders |
+| Table III, query conditioning, attention margins, width | `analysis/analyze_review_robustness.py` | `results/review_robustness/analysis/` |
+| Fig. 3, Table IV, per-bin intervals | `analysis/analyze_relbench_interventions_and_planted_signal.py`, `analysis/analyze_planted_bins_with_intervals.py` | `results/relbench_planted_signal/analysis/`, `results/review_response_analysis/planted_bins_with_intervals.csv` |
+| RelBench ratio and task difficulty | `analysis/analyze_relbench_jbr_task_difficulty.py`, `analysis/analyze_task_conditional_jbr.py` | `results/relbench_jbr_analysis/`, `results/relbench_task_conditional/` |
 
 ## Running
 
-Runs on a laptop CPU (developed on an 8 GB Apple M1). Three worker processes with two threads each use
-about 1.5 GB of memory in total.
+The controlled experiments run on a laptop CPU.
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-python experiments/run_synthetic_experiments.py --pilot --results results/pilot_runs.jsonl
-python experiments/run_synthetic_experiments.py --workers 3 --threads-per-worker 2
-python analysis/analyze_synthetic_phase_transition.py
+python experiments/run_law_validation_and_depth_experiments.py --workers 3 --threads-per-worker 2
+python analysis/analyze_law_validation_and_depth.py
 ```
 
-The runner skips finished runs, so it can be interrupted and restarted at any time.
+Every runner skips finished runs, so it can be interrupted and restarted. The RelBench experiments download the
+RelBench databases on first use and build a graph cache under `data/` (not in the repository).
